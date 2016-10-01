@@ -12,21 +12,18 @@
 #include <unistd.h>
 #define MAXPATHLEN 1024
 
-bool is_file(const std::string& path)
-{
+bool is_file(const std::string& path) {
   struct stat sts;
   return (stat(path.c_str(), &sts) == 0 && S_ISREG(sts.st_mode)) ? true: false;
 }
 
-std::string get_current_path()
-{
+std::string get_current_path() {
   std::vector<char> path(MAXPATHLEN);
   getcwd(&path[0], path.size());
   return std::string(&path[0]);
 }
 
-std::vector<std::string> list_files(const std::string& path)
-{
+std::vector<std::string> list_files(const std::string& path) {
   std::vector<std::string> files;
   DIR* handle = opendir(path.c_str());
   if (handle) {
