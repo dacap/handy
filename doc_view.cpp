@@ -138,7 +138,7 @@ bool DocView::on_key(Ctx* ctx, int ch) {
       return true;
     case 19:                // Ctrl+S
       doc()->save();
-      break;
+      return true;
   }
 
   if (m_mode == Mode::Nav ||
