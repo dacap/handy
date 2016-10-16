@@ -24,9 +24,11 @@ public:
   cursor_t cursor() const { return m_doc->cursors().get(m_cursor_ref); }
   cursor_t sel() const { return m_doc->cursors().get(m_sel_ref); }
   int cur_char() const { return m_doc->get_char(cursor()); }
+  Pos scroll() const { return m_scroll; }
 
   void set_doc(const DocPtr& doc);
   void set_cursor(cursor_t p);
+  void set_scroll(const Pos& scroll);
 
   // View impl
   std::string get_status_text() const override;
@@ -57,8 +59,11 @@ public:
   void end_of_file();
 
 private:
+  void update_scroll();
+
   DocPtr m_doc;
   Mode m_mode;
   cursor_ref m_cursor_ref;
   cursor_ref m_sel_ref;
+  Pos m_scroll;
 };

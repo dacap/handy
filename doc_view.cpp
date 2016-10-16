@@ -19,8 +19,13 @@ void DocView::set_doc(const DocPtr& doc) {
   m_doc = doc;
 }
 
-void DocView::set_cursor(cursor_t p) {
-  m_doc->cursors().set(m_cursor_ref, p);
+void DocView::set_cursor(cursor_t i) {
+  m_doc->cursors().set(m_cursor_ref, i);
+  update_scroll();
+}
+
+void DocView::set_scroll(const Pos& scroll) {
+  m_scroll = scroll;
 }
 
 std::string DocView::get_status_text() const {
@@ -54,8 +59,6 @@ Pos DocView::calc_pos(cursor_t j) const {
     if (ch == '\n') {
       p.x = 0;
       ++p.y;
-      if (p.y >= h)
-        break;
     }
     else
       ++p.x;
@@ -97,19 +100,24 @@ void DocView::show(Ctx* ctx) {
       }
     }
 
-    if (ch == '\n') {
-      // Show a reversed char to show that the \n is selected
-      if (reversed)
-        panel->print(' ');
+    if (p.y >= m_scroll.y) {
+      if (ch == '\n') {
+        // Show a reversed char to show that the \n is selected
+        if (reversed)
+          panel->print(' ');
+      }
+
+      if (p.x >= m_scroll.x && p.x < m_scroll.x+w)
+        panel->print(ch);
     }
 
-    if (p.x < w)
-      panel->print(ch);
-
     if (ch == '\n') {
+      if (p.x < m_scroll.x)
+        panel->print('\n');
+
       p.x = 0;
       ++p.y;
-      if (p.y >= h)
+      if (p.y >= m_scroll.y+h)
         break;
     }
     else
@@ -119,11 +127,11 @@ void DocView::show(Ctx* ctx) {
   }
   panel->attr_normal();
 
-  if (cursor_p.x < 0 &&
-      cursor_p.y < 0) {
+  if (cursor_p.x < 0 ||
+      cursor_p.y < 0)
     cursor_p = p;
-  }
-  panel->move(cursor_p.x, cursor_p.y);
+  panel->move(cursor_p.x-m_scroll.x,
+              cursor_p.y-m_scroll.y);
   panel->update();
 }
 
@@ -237,6 +245,7 @@ bool DocView::on_key(Ctx* ctx, int ch) {
         break;
       default:
         m_doc->insert(cursor(), ch);
+        update_scroll(); // TODO call this automatically when m_doc.cursors.update_cursors_from() is signaled
         break;
     }
     return true;
@@ -441,14 +450,18 @@ void DocView::next_block() {
 
 void DocView::delete_prev_char() {
   cursor_t i = cursor();
-  if (i > 0)
+  if (i > 0) {
     m_doc->erase(i-1);
+    update_scroll(); // TODO call this automatically when m_doc.cursors.update_cursors_from() is signaled
+  }
 }
 
 void DocView::delete_next_char() {
   cursor_t i = cursor();
-  if (i < m_doc->size())
+  if (i < m_doc->size()) {
     m_doc->erase(i);
+    update_scroll(); // TODO call this automatically when m_doc.cursors.update_cursors_from() is signaled
+  }
 }
 
 bool DocView::delete_sel() {
@@ -459,6 +472,7 @@ bool DocView::delete_sel() {
   cursor_t j = std::max(cursor(), sel());
   if (i < j) {
     m_doc->erase(i, j-i);
+    update_scroll(); // TODO call this automatically when m_doc.cursors.update_cursors_from() is signaled
     return true;
   }
   else
@@ -505,4 +519,16 @@ void DocView::beg_of_file() {
 
 void DocView::end_of_file() {
   set_cursor(m_doc->size());
+}
+
+void DocView::update_scroll() {
+  // Update scroll
+  PanelPtr panel = this->panel();
+  Pos pos = calc_pos(cursor());
+  Pos scroll = this->scroll();
+  if (pos.x < scroll.x) scroll.x = pos.x;
+  if (pos.y < scroll.y) scroll.y = pos.y;
+  if (pos.x > scroll.x+panel->width()-1) scroll.x = pos.x-panel->width()+1;
+  if (pos.y > scroll.y+panel->height()-1) scroll.y = pos.y-panel->height()+1;
+  set_scroll(scroll);
 }
