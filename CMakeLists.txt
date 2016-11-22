@@ -14,6 +14,7 @@ endif()
 
 add_executable(handy
   app.cpp
+  clipboard.cpp
   doc_view.cpp
   fs.cpp
   main.cpp

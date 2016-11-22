@@ -59,6 +59,7 @@ public:
   void end_of_file();
 
 private:
+  std::string sel_content();
   void update_scroll();
 
   DocPtr m_doc;

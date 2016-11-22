@@ -6,6 +6,8 @@
 
 #include "doc_view.h"
 
+#include "clipboard.h"
+
 std::string DocView::clipboard;
 
 DocView::DocView(const DocPtr& doc)
@@ -207,7 +209,7 @@ bool DocView::on_key(Ctx* ctx, int ch) {
         m_mode = Mode::Sel;
         m_sel_ref = m_doc->cursors().add(cursor());
         return true;
-      case 10:
+      case 10: // Enter starts ins mode
         m_mode = Mode::Ins;
         return true;
       case 15:
@@ -227,6 +229,10 @@ bool DocView::on_key(Ctx* ctx, int ch) {
       case 'H':
         if (!end_of_line())
           end_of_file();
+        break;
+      case 'v':               // TODO paste
+        for (auto ch : Clipboard::get_content())
+          m_doc->insert(cursor(), ch);
         break;
     }
   }
@@ -256,11 +262,13 @@ bool DocView::on_key(Ctx* ctx, int ch) {
       case 127:               // backspace
         delete_sel();
         break;
+        // continue in 'x' case
       case 'x':               // TODO cut
+        Clipboard::set_content(sel_content());
+        delete_sel();
         break;
       case 'c':               // TODO copy
-        break;
-      case 'v':               // TODO paste
+        Clipboard::set_content(sel_content());
         break;
       case 'q':               // TODO quit
         break;
@@ -519,6 +527,13 @@ void DocView::beg_of_file() {
 
 void DocView::end_of_file() {
   set_cursor(m_doc->size());
+}
+
+std::string DocView::sel_content()
+{
+  cursor_t i = std::min(cursor(), sel());
+  cursor_t j = std::max(cursor(), sel());
+  return m_doc->str().substr(i, j-i);
 }
 
 void DocView::update_scroll() {
