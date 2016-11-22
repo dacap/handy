@@ -3,8 +3,10 @@
 
 > Distributed under [MIT license](LICENSE.txt)
 
+An experimental text editor.
+
 ## Platforms
 
-This program is developed for Mac OS X compiled with Clang at this
-moment. But there are plans to port it to Windows+Visual Studio and
-Linux+gcc.
+This program is actively developed on macOS and compiled with Clang at
+this moment. But there are plans to port it to Windows+Visual Studio
+and Linux+gcc.
