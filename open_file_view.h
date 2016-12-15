@@ -6,14 +6,14 @@
 
 #pragma once
 
-#include "fs.h"
+#include "base/fs.h"
 #include "view.h"
 
 class OpenFileView : public View {
 public:
   OpenFileView() {
-    m_dir = get_current_path();
-    m_files = list_files(m_dir);
+    m_dir = base::get_current_path();
+    m_files = base::list_files(m_dir);
   }
 
   std::string get_status_text() const override {
@@ -23,7 +23,7 @@ public:
   void show(Ctx* ctx) override {
     panel()->clear();
     panel()->move(0, 0);
-    for (const auto& f : list_files(m_dir)) {
+    for (const auto& f : base::list_files(m_dir)) {
       panel()->print((f+"\n").c_str());
     }
     panel()->update();

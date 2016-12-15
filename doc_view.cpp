@@ -8,6 +8,8 @@
 
 #include "clipboard.h"
 
+#include <algorithm>
+
 std::string DocView::clipboard;
 
 DocView::DocView(const DocPtr& doc)

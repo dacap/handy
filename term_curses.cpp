@@ -5,83 +5,86 @@
 // Read LICENSE.txt for more information.
 
 #include <curses.h>
+
+typedef WINDOW PanelImpl;
+struct TermImpl { };
 #define TERM_IMPL
 #include "term.h"
 
 Panel::Panel(int x, int y, int w, int h) {
-  m_win = newwin(h, w, y, x);
+  m_impl = newwin(h, w, y, x);
   raw();
-  keypad(m_win, TRUE);
-  meta(m_win, TRUE);
+  keypad(m_impl, TRUE);
+  meta(m_impl, TRUE);
 }
 
 Panel::~Panel() {
-  delwin(m_win);
+  delwin(m_impl);
 }
 
 int Panel::x() {
   int y, x;
-  getbegyx(m_win, y, x);
+  getbegyx(m_impl, y, x);
   return x;
 }
 
 int Panel::y() {
   int y, x;
-  getbegyx(m_win, y, x);
+  getbegyx(m_impl, y, x);
   return y;
 }
 
 int Panel::width() {
   int y, x;
-  getmaxyx(m_win, y, x);
+  getmaxyx(m_impl, y, x);
   return x;
 }
 
 int Panel::height() {
   int y, x;
-  getmaxyx(m_win, y, x);
+  getmaxyx(m_impl, y, x);
   return y;
 }
 
 void Panel::clear() {
-  wclear(m_win);
+  wclear(m_impl);
 }
 
 void Panel::print(const char* s) {
-  wprintw(m_win, s);
+  wprintw(m_impl, s);
 }
 
 void Panel::print(const char ch) {
-  waddch(m_win, ch);
+  waddch(m_impl, ch);
 }
 
 void Panel::move(int x, int y) {
-  wmove(m_win, y, x);
+  wmove(m_impl, y, x);
 }
 
 void Panel::update() {
-  wrefresh(m_win);
+  wrefresh(m_impl);
 }
 
 void Panel::update_lines(int y, int h) {
-  wredrawln(m_win, y, h);
+  wredrawln(m_impl, y, h);
 }
 
 int Panel::get_char() {
-  return wgetch(m_win);
+  return wgetch(m_impl);
 }
 
 void Panel::attr_reverse()
 {
-  wattron(m_win, A_REVERSE);
+  wattron(m_impl, A_REVERSE);
 }
 
 void Panel::attr_normal()
 {
-  wattroff(m_win, A_REVERSE);
+  wattroff(m_impl, A_REVERSE);
 }
 
-Term::Term() {
+Term::Term() : m_impl(nullptr) {
   initscr();
   cbreak();
   noecho();

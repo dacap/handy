@@ -5,12 +5,13 @@
 // Read LICENSE.txt for more information.
 
 #include "app.h"
+#include "base/fs.h"
 
 int main(int argc, char* argv[]) {
   App app;
 
   for (int i=1; i<argc; ++i)
-    if (is_file(argv[i]))
+    if (base::is_file(argv[i]))
       app.load_file(argv[i]);
 
   while (app.is_running())

@@ -7,7 +7,8 @@
 #pragma once
 
 #ifndef TERM_IMPL
-struct WINDOW;
+struct PanelImpl;
+struct TermImpl;
 #define KEY_ESC   27
 #define KEY_DOWN  258
 #define KEY_UP    259
@@ -33,7 +34,7 @@ public:
   void attr_reverse();
   void attr_normal();
 private:
-  WINDOW* m_win;
+  PanelImpl* m_impl;
 };
 
 class Term {
@@ -42,4 +43,6 @@ public:
   ~Term();
   int width();
   int height();
+private:
+  TermImpl* m_impl;
 };

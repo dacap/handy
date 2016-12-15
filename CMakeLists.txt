@@ -6,22 +6,37 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-find_library(CURSES_LIB NAMES curses)
+if(WIN32)
+  add_definitions(-DUNICODE -D_UNICODE)
+endif()
+
+set(LAF_WITH_TESTS OFF CACHE BOOL "Enable LAF tests")
+add_subdirectory(laf)
 
 if(APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 endif()
 
+set(PLATFORM_LIBS)
+set(TERM_SOURCES)
+if(UNIX)
+  find_library(CURSES_LIB NAMES curses)
+  list(APPEND PLATFORM_LIBS ${CURSES_LIB})
+  list(APPEND TERM_SOURCES term_curses.cpp)
+elseif(WIN32)
+  list(APPEND TERM_SOURCES term_win.cpp)
+endif()
+
+add_library(term-lib ${TERM_SOURCES})
+
 add_executable(handy
   app.cpp
   clipboard.cpp
   doc_view.cpp
-  fs.cpp
-  main.cpp
-  term.cpp)
+  main.cpp)
+target_link_libraries(handy term-lib laf-base ${PLATFORM_LIBS})
 
-add_executable(getkey
-  tools/getkey.cpp)
-
-target_link_libraries(handy ${CURSES_LIB})
-target_link_libraries(getkey ${CURSES_LIB})
+if(UNIX)
+  add_executable(getkey tools/getkey.cpp)
+  target_link_libraries(getkey ${PLATFORM_LIBS})
+endif()
