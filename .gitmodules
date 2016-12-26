@@ -1,3 +1,6 @@
 [submodule "laf"]
 	path = laf
 	url = https://github.com/aseprite/laf.git
+[submodule "clip"]
+	path = clip
+	url = https://github.com/dacap/clip.git

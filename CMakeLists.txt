@@ -13,6 +13,9 @@ endif()
 set(LAF_WITH_TESTS OFF CACHE BOOL "Enable LAF tests")
 add_subdirectory(laf)
 
+set(CLIP_EXAMPLES OFF CACHE BOOL "Compile clip examples")
+add_subdirectory(clip)
+
 if(APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 endif()
@@ -34,7 +37,11 @@ add_executable(handy
   clipboard.cpp
   doc_view.cpp
   main.cpp)
-target_link_libraries(handy term-lib laf-base ${PLATFORM_LIBS})
+target_link_libraries(handy
+  term-lib
+  clip
+  laf-base
+  ${PLATFORM_LIBS})
 
 if(UNIX)
   add_executable(getkey tools/getkey.cpp)

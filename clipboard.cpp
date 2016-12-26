@@ -5,14 +5,14 @@
 // Read LICENSE.txt for more information.
 
 #include "clipboard.h"
-
-// static
-std::string Clipboard::m_content;
+#include "clip/clip.h"
 
 void Clipboard::set_content(const std::string& text) {
-  m_content = text;
+  clip::set_text(text);
 }
 
 std::string Clipboard::get_content() {
-  return m_content;
+  std::string value;
+  clip::get_text(value);
+  return value;
 }

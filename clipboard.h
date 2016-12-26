@@ -12,7 +12,4 @@ class Clipboard {
 public:
   static void set_content(const std::string& text);
   static std::string get_content();
-
-private:
-  static std::string m_content;
 };
