@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016 David Capello
+// Copyright (c) 2016, 2017 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -304,11 +304,11 @@ void DocView::find_text(Ctx* ctx) {
 
 void DocView::quit(Ctx* ctx) {
   if (m_doc->modified()) {
-    int res = ctx->alert("Quit => Save changes? [y/n]");
+    int res = ctx->alert("Quit => Save changes? [y]es [n]o [c]ancel");
     if (res == 'y')
       m_doc->save();
     else if (res != 'n')
-      return;
+      return;                   // Cancel
   }
   ctx->close();
 }
