@@ -17,7 +17,7 @@ public:
   Doc();
 
   const std::string& filename() const { return m_filename; }
-  bool modified() const { return m_modified; }
+  bool modified() const;
 
   bool load(const char* fn);
   bool save();
@@ -50,8 +50,8 @@ private:
 
   std::string m_filename;
   std::string m_buf;
-  bool m_modified;
   Cursors m_cursors;
   undo::UndoHistory m_undo;
+  const undo::UndoState* m_saved_state;
   cursor_t m_last_modified_pos;
 };
