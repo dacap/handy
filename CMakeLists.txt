@@ -35,6 +35,7 @@ add_library(term-lib ${TERM_SOURCES})
 add_executable(handy
   app.cpp
   clipboard.cpp
+  doc.cpp
   doc_view.cpp
   main.cpp
   view.cpp)
