@@ -22,8 +22,8 @@ public:
     Sea                         // Searching text
   };
 
-  View() : m_mode(Mode::Nav) { }
-  virtual ~View() { }
+  View();
+  virtual ~View();
 
   PanelPtr panel() const { return m_panel; }
   void set_panel(const PanelPtr& panel) {
@@ -35,43 +35,11 @@ public:
     m_mode = mode;
   }
 
-  virtual std::string get_status_text() const {
-    return "";
-  }
+  virtual std::string get_status_text() const;
+  virtual void show(Ctx* ctx);
+  virtual bool on_key(Ctx* ctx, int ch);
 
-  virtual void show(Ctx* ctx) {
-    ctx->status()->clear();
-
-    if (mode() == Mode::Sea) {
-      ctx->status()->print(("Searching: " + m_searchingText).c_str());
-    }
-    else {
-      ctx->status()->print(get_status_text().c_str());
-    }
-
-    ctx->status()->update();
-  }
-
-  virtual bool on_key(Ctx* ctx, int ch) {
-    // Searching text
-    if (mode() == Mode::Sea) {
-      switch (ch) {
-        case 27:
-          set_mode(Mode::Nav);  // Back to navigation
-          return true;
-        default:
-          m_searchingText.push_back(ch);
-          break;
-      }
-    }
-
-    return false;
-  }
-
-  void search_text(Ctx* ctx) {
-    set_mode(Mode::Sea);
-    m_searchingText = "";
-  }
+  void search_text(Ctx* ctx);
 
 private:
   PanelPtr m_panel;
