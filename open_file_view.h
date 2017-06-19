@@ -12,13 +12,13 @@
 class OpenFileView : public View {
 public:
   OpenFileView() {
-    m_dir = base::get_current_path();
-    m_files = base::list_files(m_dir);
+    m_path = base::get_current_path();
+    m_files = base::list_files(m_path);
     m_selected = 0;
   }
 
   std::string get_status_text() const override {
-    return "-- " + m_dir + " --";
+    return "-- " + m_path + " --";
   }
 
   void show(Ctx* ctx) override {
@@ -27,7 +27,7 @@ public:
     panel->move(0, 0);
 
     int i = 0;
-    for (const auto& f : base::list_files(m_dir)) {
+    for (const auto& f : base::list_files(m_path)) {
       if (m_selected == i)
         panel->attr_reverse();
       else
@@ -62,14 +62,14 @@ public:
         // open file
         if (m_selected >= 0 && m_selected < int(m_files.size()))
           ctx->open_file(
-            base::join_path(m_dir, m_files[m_selected]).c_str());
+            base::join_path(m_path, m_files[m_selected]).c_str());
         break;
     }
     return false;
   }
 
 private:
-  std::string m_dir;
+  std::string m_path;
   std::vector<std::string> m_files;
   int m_selected;
 };
