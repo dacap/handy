@@ -232,9 +232,16 @@ bool DocView::on_key(Ctx* ctx, int ch) {
         if (!end_of_line())
           end_of_file();
         break;
-      case 'v':               // TODO paste
-        for (auto ch : Clipboard::get_content())
-          m_doc->insert(cursor(), ch);
+      case 'v':               // Paste
+        m_doc->insert(cursor(), Clipboard::get_content());
+        break;
+      case 'z':               // Undo
+        m_doc->undo();
+        set_cursor(m_doc->last_modified_pos());
+        break;
+      case 'Z':               // Redo
+        m_doc->redo();
+        set_cursor(m_doc->last_modified_pos());
         break;
     }
   }

@@ -4,3 +4,6 @@
 [submodule "clip"]
 	path = clip
 	url = https://github.com/dacap/clip.git
+[submodule "undo"]
+	path = undo
+	url = https://github.com/dacap/undo.git

@@ -16,6 +16,9 @@ add_subdirectory(laf)
 set(CLIP_EXAMPLES OFF CACHE BOOL "Compile clip examples")
 add_subdirectory(clip)
 
+set(UNDO_TESTS OFF CACHE BOOL "Compile undo tests")
+add_subdirectory(undo)
+
 if(APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 endif()
@@ -39,9 +42,11 @@ add_executable(handy
   doc_view.cpp
   main.cpp
   view.cpp)
+
 target_link_libraries(handy
   term-lib
   clip
+  undo
   laf-base
   ${PLATFORM_LIBS})
 
