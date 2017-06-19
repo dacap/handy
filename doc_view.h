@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016 David Capello
+// Copyright (c) 2016-2017 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -16,7 +16,6 @@
 
 class DocView : public View {
   static std::string clipboard;
-  enum Mode { Nav, Ins, Cmd, Sel, Find };
 public:
   DocView(const DocPtr& doc);
 
@@ -63,7 +62,6 @@ private:
   void update_scroll();
 
   DocPtr m_doc;
-  Mode m_mode;
   cursor_ref m_cursor_ref;
   cursor_ref m_sel_ref;
   Pos m_scroll;

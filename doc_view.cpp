@@ -16,7 +16,7 @@ DocView::DocView(const DocPtr& doc)
   : m_doc(doc) {
   m_cursor_ref = m_doc->cursors().add(0);
   m_sel_ref = -1;
-  m_mode = Mode::Ins;
+  set_mode(Mode::Ins);
 }
 
 void DocView::set_doc(const DocPtr& doc) {
@@ -34,7 +34,7 @@ void DocView::set_scroll(const Pos& scroll) {
 
 std::string DocView::get_status_text() const {
   char buf[2048];
-  if (m_mode == Mode::Cmd) {
+  if (mode() == Mode::Cmd) {
     sprintf(buf, "Command? [s]ave [m]ore [q]uit");
   }
   else {
@@ -43,8 +43,8 @@ std::string DocView::get_status_text() const {
             pos.y+1, pos.x,
             doc()->filename().c_str(),
             doc()->modified() ? " (*)": "",
-            m_mode == Mode::Ins ? " -- editing":
-            m_mode == Mode::Sel ? " -- selecting": "");
+            mode() == Mode::Ins ? " -- editing":
+            mode() == Mode::Sel ? " -- selecting": "");
   }
   return buf;
 }
@@ -153,8 +153,8 @@ bool DocView::on_key(Ctx* ctx, int ch) {
       return true;
   }
 
-  if (m_mode == Mode::Nav ||
-      m_mode == Mode::Sel) {
+  if (mode() == Mode::Nav ||
+      mode() == Mode::Sel) {
     switch (ch) {
       case 'j':
       case KEY_LEFT:
@@ -199,27 +199,27 @@ bool DocView::on_key(Ctx* ctx, int ch) {
     }
   }
 
-  if (m_mode == Mode::Nav) {
+  if (mode() == Mode::Nav) {
     switch (ch) {
       case 'q':
         quit(ctx);
         return true;
       case 'm':
-        m_mode = Mode::Cmd;
+        set_mode(Mode::Cmd);
         return true;
       case 's':
-        m_mode = Mode::Sel;
+        set_mode(Mode::Sel);
         m_sel_ref = m_doc->cursors().add(cursor());
         return true;
       case 10: // Enter starts ins mode
-        m_mode = Mode::Ins;
+        set_mode(Mode::Ins);
         return true;
       case 15:
         ctx->set_view(ViewPtr(new OpenFileView));
         return true;
       case ' ':
       case 127: // Space and backspace start ins mode modifying the doc
-        m_mode = Mode::Ins;
+        set_mode(Mode::Ins);
         break;
       case 'f':
         find_text(ctx);
@@ -239,14 +239,14 @@ bool DocView::on_key(Ctx* ctx, int ch) {
     }
   }
 
-  if (m_mode == Mode::Ins) {
+  if (mode() == Mode::Ins) {
     switch (ch) {
       case KEY_LEFT:  prev_char(); return true;
       case KEY_RIGHT: next_char(); return true;
       case KEY_UP:    prev_line(); return true;
       case KEY_DOWN:  next_line(); return true;
       case 27:
-        m_mode = Mode::Nav;
+        set_mode(Mode::Nav);
         break;
       case 127:      // backspace
         delete_prev_char();
@@ -259,7 +259,7 @@ bool DocView::on_key(Ctx* ctx, int ch) {
     return true;
   }
 
-  if (m_mode == Mode::Sel) {
+  if (mode() == Mode::Sel) {
     switch (ch) {
       case 127:               // backspace
         delete_sel();
@@ -277,10 +277,10 @@ bool DocView::on_key(Ctx* ctx, int ch) {
     }
     m_doc->cursors().del(m_sel_ref);
     m_sel_ref = -1;
-    m_mode = Mode::Nav;
+    set_mode(Mode::Nav);
   }
 
-  if (m_mode == Mode::Cmd) {
+  if (mode() == Mode::Cmd) {
     switch (ch) {
       case 'q':
         quit(ctx);
@@ -292,14 +292,14 @@ bool DocView::on_key(Ctx* ctx, int ch) {
         doc()->save();
         break;
     }
-    m_mode = Mode::Nav;
+    set_mode(Mode::Nav);
     return true;
   }
   return false;
 }
 
 void DocView::find_text(Ctx* ctx) {
-  m_mode = Mode::Find;
+  set_mode(Mode::Find);
 }
 
 void DocView::quit(Ctx* ctx) {
