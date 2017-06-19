@@ -34,7 +34,6 @@ public:
   Pos calc_pos(cursor_t j) const;
   void show(Ctx* ctx) override;
   bool on_key(Ctx* ctx, int ch) override;
-  void find_text(Ctx* ctx);
   void quit(Ctx* ctx);
 
   bool prev_char();

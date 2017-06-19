@@ -143,7 +143,7 @@ bool DocView::on_key(Ctx* ctx, int ch) {
   // Globals
   switch (ch) {
     case 6:                   // Ctrl+F
-      find_text(ctx);
+      search_text(ctx);
       return true;
     case 17:                // Ctrl+Q
       quit(ctx);
@@ -222,7 +222,7 @@ bool DocView::on_key(Ctx* ctx, int ch) {
         set_mode(Mode::Ins);
         break;
       case 'f':
-        find_text(ctx);
+        search_text(ctx);
         return true;
       case 'h':
         if (!beg_of_line())
@@ -295,11 +295,8 @@ bool DocView::on_key(Ctx* ctx, int ch) {
     set_mode(Mode::Nav);
     return true;
   }
-  return false;
-}
 
-void DocView::find_text(Ctx* ctx) {
-  set_mode(Mode::Find);
+  return View::on_key(ctx, ch);
 }
 
 void DocView::quit(Ctx* ctx) {

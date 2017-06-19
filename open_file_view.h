@@ -60,12 +60,13 @@ public:
         break;
       case 10:                  // Enter open the selected file
         // open file
-        if (m_selected >= 0 && m_selected < int(m_files.size()))
+        if (m_selected >= 0 && m_selected < int(m_files.size())) {
           ctx->open_file(
             base::join_path(m_path, m_files[m_selected]).c_str());
+        }
         break;
     }
-    return false;
+    return View::on_key(ctx, ch);
   }
 
 private:
