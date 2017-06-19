@@ -7,7 +7,7 @@
 #pragma once
 
 #include "cursors.h"
-#include "undo/undo_history.h"
+#include "doc_undo.h"
 
 #include <fstream>
 #include <string>
@@ -17,7 +17,7 @@ public:
   Doc();
 
   const std::string& filename() const { return m_filename; }
-  bool modified() const;
+  bool modified() const { return m_undo.in_saved_state(); }
 
   bool load(const char* fn);
   bool save();
@@ -51,7 +51,6 @@ private:
   std::string m_filename;
   std::string m_buf;
   Cursors m_cursors;
-  undo::UndoHistory m_undo;
-  const undo::UndoState* m_saved_state;
+  DocUndo m_undo;
   cursor_t m_last_modified_pos;
 };

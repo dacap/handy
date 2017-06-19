@@ -39,6 +39,7 @@ add_executable(handy
   app.cpp
   clipboard.cpp
   doc.cpp
+  doc_undo.cpp
   doc_view.cpp
   main.cpp
   view.cpp)

@@ -27,20 +27,13 @@ private:
 } // anonymous namespace
 
 Doc::Doc()
-  : m_filename("untitled")
-  , m_saved_state(nullptr) {
-}
-
-bool Doc::modified() const {
-  return (m_undo.currentState() != m_saved_state);
+  : m_filename("untitled") {
 }
 
 bool Doc::load(const char* fn) {
   m_buf.clear();
+  m_undo.clear();
   m_filename = fn;
-
-  m_undo = undo::UndoHistory();
-  m_saved_state = nullptr;
 
   std::ifstream f(fn, std::ios::in | std::ios::binary);
   if (!f)
@@ -53,7 +46,6 @@ bool Doc::load(const char* fn) {
       m_buf.append(&tmp[0], f.gcount());
   }
 
-  m_saved_state = m_undo.currentState();
   return true;
 }
 
@@ -67,7 +59,7 @@ bool Doc::save(const char* fn) {
     return false;
   f.write(c_str(), m_buf.size());
   if (f.good())
-    m_saved_state = m_undo.currentState();
+    m_undo.mark_as_saved_state();
   return true;
 }
 
