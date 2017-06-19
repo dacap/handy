@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016 David Capello
+// Copyright (c) 2016-2017 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -30,7 +30,7 @@ public:
   int alert(const char* msg) override;
   bool is_running() const;
   void loop();
-  void load_file(const char* fn);
+  void open_file(const char* fn) override;
 
 private:
   bool m_running;

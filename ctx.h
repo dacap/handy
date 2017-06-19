@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016 David Capello
+// Copyright (c) 2016-2017 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -17,4 +17,5 @@ public:
   virtual void set_view(const ViewPtr& view) = 0;
   virtual void back_view() = 0;
   virtual int alert(const char* msg) = 0;
+  virtual void open_file(const char* fn) = 0;
 };

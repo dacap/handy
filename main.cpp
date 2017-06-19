@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016 David Capello
+// Copyright (c) 2016-2017 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 
   for (int i=1; i<argc; ++i)
     if (base::is_file(argv[i]))
-      app.load_file(argv[i]);
+      app.open_file(argv[i]);
 
   while (app.is_running())
     app.loop();

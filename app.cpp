@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016 David Capello
+// Copyright (c) 2016-2017 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -72,7 +72,7 @@ void App::loop() {
   view->on_key(this, ch);
 }
 
-void App::load_file(const char* fn) {
+void App::open_file(const char* fn) {
   DocPtr doc(new Doc);
   if (doc->load(fn))
     set_view(ViewPtr(new DocView(doc)));
