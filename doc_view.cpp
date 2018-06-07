@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2017 David Capello
+// Copyright (c) 2016-2018 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -304,6 +304,23 @@ bool DocView::on_key(Ctx* ctx, int ch) {
   }
 
   return View::on_key(ctx, ch);
+}
+
+void DocView::on_search_text(const std::string& text, int skip)
+{
+  for (cursor_t i=cursor(); i < m_doc->size(); ++i) {
+    cursor_t j = 0;
+    for (; j < text.size() &&
+           i+j < m_doc->size() &&
+           m_doc->get_char(i+j) == text[j]; ++j)
+      ;
+    if (j == text.size()) {
+      if (skip-- == 0) {
+        set_cursor(i);
+        break;
+      }
+    }
+  }
 }
 
 void DocView::quit(Ctx* ctx) {

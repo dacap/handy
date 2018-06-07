@@ -34,8 +34,9 @@ public:
   Pos calc_pos(cursor_t j) const;
   void show(Ctx* ctx) override;
   bool on_key(Ctx* ctx, int ch) override;
-  void quit(Ctx* ctx);
+  void on_search_text(const std::string& text, int skip) override;
 
+  void quit(Ctx* ctx);
   bool prev_char();
   void next_char();
   void prev_line();

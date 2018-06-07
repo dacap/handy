@@ -38,11 +38,12 @@ public:
   virtual std::string get_status_text() const;
   virtual void show(Ctx* ctx);
   virtual bool on_key(Ctx* ctx, int ch);
+  virtual void on_search_text(const std::string& text, int skip = 0) { }
 
   void search_text(Ctx* ctx);
 
 private:
   PanelPtr m_panel;
   Mode m_mode;
-  std::string m_searchingText;
+  std::string m_searching_text;
 };

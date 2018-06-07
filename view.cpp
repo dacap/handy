@@ -14,14 +14,14 @@ View::~View() {
 }
 
 std::string View::get_status_text() const {
-  return "";
+  return std::string();
 }
 
 void View::show(Ctx* ctx) {
   ctx->status()->clear();
 
   if (mode() == Mode::Sea) {
-    ctx->status()->print(("Searching: " + m_searchingText).c_str());
+    ctx->status()->print(("Searching: " + m_searching_text).c_str());
   }
   else {
     ctx->status()->print(get_status_text().c_str());
@@ -37,8 +37,17 @@ bool View::on_key(Ctx* ctx, int ch) {
       case 27:
         set_mode(Mode::Nav);  // Back to navigation
         return true;
+      case 127: // Backspace remove text
+        if (!m_searching_text.empty()) {
+          m_searching_text.erase(--m_searching_text.end());
+          on_search_text(m_searching_text);
+        }
+        break;
       default:
-        m_searchingText.push_back(ch);
+        if (ch >= 32 && ch < 256) {
+          m_searching_text.push_back(ch);
+          on_search_text(m_searching_text);
+        }
         break;
     }
   }
@@ -47,6 +56,11 @@ bool View::on_key(Ctx* ctx, int ch) {
 }
 
 void View::search_text(Ctx* ctx) {
-  set_mode(Mode::Sea);
-  m_searchingText = "";
+  if (mode() != Mode::Sea) {
+    set_mode(Mode::Sea);
+    m_searching_text.clear();
+  }
+  else {
+    on_search_text(m_searching_text, 1);
+  }
 }
