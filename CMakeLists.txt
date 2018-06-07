@@ -36,6 +36,7 @@ endif()
 add_library(term-lib ${TERM_SOURCES})
 
 add_executable(handy
+  alert_view.cpp
   app.cpp
   clipboard.cpp
   doc.cpp
