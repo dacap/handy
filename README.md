@@ -1,5 +1,5 @@
 # handy text editor
-*Copyright (C) 2016-2017 David Capello*
+*Copyright (C) 2016-2018 David Capello*
 
 > Distributed under [MIT license](LICENSE.txt)
 
