@@ -521,6 +521,8 @@ bool DocView::delete_sel() {
 
 bool DocView::beg_of_line() {
   cursor_t i = cursor();
+  if (i > 0)
+    --i;
   while (i > 0) {
     if (m_doc->get_char(i) != '\n')
       --i;
