@@ -221,7 +221,13 @@ bool DocView::on_key(Ctx* ctx, int ch) {
       case 127: // Space and backspace start ins mode modifying the doc
         set_mode(Mode::Ins);
         break;
+      case 'd':
+        delete_prev_char();
+        return true;
       case 'f':
+        delete_next_char();
+        return true;
+      case 'y':
         search_text(ctx);
         return true;
       case 'h':
