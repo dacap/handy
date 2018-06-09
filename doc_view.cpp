@@ -233,6 +233,7 @@ bool DocView::on_key(Ctx* ctx, int ch) {
           end_of_file();
         break;
       case 'v':               // Paste
+      case 22:                // Ctrl+V
         m_doc->insert(cursor(), Clipboard::get_content());
         break;
       case 'z':               // Undo
@@ -273,10 +274,12 @@ bool DocView::on_key(Ctx* ctx, int ch) {
         break;
         // continue in 'x' case
       case 'x':               // TODO cut
+      case 24:                // Ctrl+X
         Clipboard::set_content(sel_content());
         delete_sel();
         break;
       case 'c':               // TODO copy
+      case 3:                 // Ctrl+C
         Clipboard::set_content(sel_content());
         break;
       case 'q':               // TODO quit
