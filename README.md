@@ -17,6 +17,23 @@ only for experimentation by David Capello.
   * `Mode::Sel`: Selecting text.
   * `Mode::Sea`: Searching text.
 
+## UX
+
+Some random notes about the "handy" UX:
+
+* Start on editing mode (DocView+Ins mode) when the program is launched with a file name as argument.
+* Start on with a file browsing interface (OpenFileView) showing the current directory when the program is started without arguments.
+  From this view it should be easy to create new files in the directory or navigate to other directories, open files, etc.
+* Editing mode by default with access to special modes with Ctrl+common shortcut (like `Ctrl+F` to find text in the document).
+* Git views: status, log, commit, and diff views.
+* General shortcuts guidelines:
+  * Similar layout to [ergoprog](https://davidcapello.com/programming/keyboard-layout/) + modes
+  * `Ctrl+Q`: closes the program (ask for saving changes)
+  * `Nav`: `J`/`I`/`L`/`K`=previous char/line and next char/line, `Enter`/`Space`/`Backspace`=enter to `Ins` mode
+  * `Ins`: `Esc`=go back to `Nav` mode
+  * `Sel`: `Enter`=finish selection
+  * `Sea`: `Ctrl+F`=go to next result, `Enter`=exit `Sea` mode
+
 ## Platforms
 
 This program is being developed on macOS. There are no short-term
