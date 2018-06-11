@@ -24,5 +24,7 @@ void DocUndo::mark_as_saved_state() {
 }
 
 void DocUndo::add(undo::UndoCommand* cmd) {
+  // Make a linear undo clearing the redo if we add a new undo state
+  m_undo.clearRedo();
   m_undo.add(cmd);
 }
