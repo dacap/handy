@@ -242,6 +242,9 @@ bool DocView::on_key(Ctx* ctx, int ch) {
       case 22:                // Ctrl+V
         m_doc->insert(cursor(), Clipboard::get_content());
         break;
+      case 'w':
+        clean_whitespace();
+        break;
       case 'z':               // Undo
         m_doc->undo();
         set_cursor(m_doc->last_modified_pos());
@@ -510,8 +513,13 @@ bool DocView::delete_sel() {
 
   cursor_t i = std::min(cursor(), sel());
   cursor_t j = std::max(cursor(), sel());
+  return delete_range(i, j);
+}
+
+bool DocView::delete_range(cursor_t i, cursor_t j) {
   if (i < j) {
     m_doc->erase(i, j-i);
+    set_cursor(i);
     update_scroll(); // TODO call this automatically when m_doc.cursors.update_cursors_from() is signaled
     return true;
   }
@@ -561,6 +569,83 @@ void DocView::beg_of_file() {
 
 void DocView::end_of_file() {
   set_cursor(m_doc->size());
+}
+
+void DocView::clean_whitespace() {
+  cursor_t i, j, ni, nj;
+  i = j = cursor();
+  ni = nj = -1;
+
+  // Find bol
+  if (i > 0)
+    --i;
+  while (i > 0) {
+    int ch = m_doc->get_char(i);
+    if (ch == '\n') {
+      ni = ++i;
+      break;
+    }
+    else if (ch != ' ' && ch != '\t') {
+      ++i;
+      break;
+    }
+    --i;
+  }
+
+  // Find eol
+  while (j < m_doc->size()) {
+    int ch = m_doc->get_char(j);
+    if (ch == '\n') {
+      nj = j;
+      break;
+    }
+    else if (ch != ' ' && ch != '\t')
+      break;
+    ++j;
+  }
+
+  // Delete several lines
+  const bool multi_lines = (ni >= 0 && nj >= 0);
+  if (multi_lines) {
+    int newline_chars = 0;
+
+    // Delete one line
+    while (i > 0) {
+      int ch = m_doc->get_char(i);
+      if (ch == '\n') {
+        ni = i+1;
+        ++newline_chars;
+      }
+      else if (ch != ' ' && ch != '\t') {
+        i = ni;
+        break;
+      }
+      --i;
+    }
+    while (j < m_doc->size()) {
+      int ch = m_doc->get_char(j);
+      if (ch == '\n') {
+        nj = j;
+        ++newline_chars;
+      }
+      else if (ch != ' ' && ch != '\t') {
+        j = nj + (newline_chars > 3 ? 0: 1);
+        break;
+      }
+      ++j;
+    }
+  }
+
+  if (i != j) {
+    if (multi_lines)
+      delete_range(i, j);
+    else {
+      if (j-i > 1)
+        delete_range(i, j-1);
+      else
+        delete_range(i, j);
+    }
+  }
 }
 
 std::string DocView::sel_content()

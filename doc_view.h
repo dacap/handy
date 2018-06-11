@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2017 David Capello
+// Copyright (c) 2016-2018 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -52,10 +52,12 @@ public:
   void delete_prev_char();
   void delete_next_char();
   bool delete_sel();
+  bool delete_range(cursor_t i, cursor_t j);
   bool beg_of_line();
   bool end_of_line();
   void beg_of_file();
   void end_of_file();
+  void clean_whitespace();
 
 private:
   std::string sel_content();
