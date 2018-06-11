@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2017 David Capello
+// Copyright (c) 2016-2018 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -34,6 +34,7 @@ bool View::on_key(Ctx* ctx, int ch) {
   // Searching text
   if (mode() == Mode::Sea) {
     switch (ch) {
+      case 10:
       case 27:
         set_mode(Mode::Nav);  // Back to navigation
         return true;
