@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2017 David Capello
+// Copyright (c) 2016-2018 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -10,6 +10,7 @@
 #include "ctx.h"
 #include "term.h"
 
+#include <stack>
 #include <string>
 
 class View {
@@ -45,5 +46,6 @@ public:
 private:
   PanelPtr m_panel;
   Mode m_mode;
+  std::stack<Mode> m_old_modes;
   std::string m_searching_text;
 };
