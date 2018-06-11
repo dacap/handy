@@ -22,7 +22,7 @@ void OpenFileView::show(Ctx* ctx) {
   panel->move(0, 0);
 
   int i = 0;
-  for (const auto& f : base::list_files(m_path)) {
+  for (const auto& f : m_files) {
     if (m_selected == i)
       panel->attr_reverse();
     else
@@ -37,12 +37,14 @@ void OpenFileView::show(Ctx* ctx) {
 }
 
 bool OpenFileView::on_key(Ctx* ctx, int ch) {
-  View::on_key(ctx, ch);
   switch (ch) {
     case 'q':
     case KEY_ESC:
-      ctx->back_view();
-      return true;
+      if (mode() == Mode::Nav) {
+        ctx->back_view();
+        return true;
+      }
+      break;
     case 'i':
     case KEY_UP:
       if (m_selected > 0)
@@ -60,6 +62,29 @@ bool OpenFileView::on_key(Ctx* ctx, int ch) {
           base::join_path(m_path, m_files[m_selected]).c_str());
       }
       break;
+    case 6:                   // Ctrl+F
+      search_text(ctx);
+      return true;
   }
   return View::on_key(ctx, ch);
+}
+
+void OpenFileView::on_search_text(const std::string& text, int skip)
+{
+  bool continue_search = false;
+  int i = 0;
+  for (const auto& f : m_files) {
+    if (m_selected == i)
+      continue_search = true;
+
+    if (continue_search &&
+        f.find(text) != std::string::npos) {
+      if (skip-- == 0) {
+        m_selected = i;
+        break;
+      }
+    }
+
+    ++i;
+  }
 }

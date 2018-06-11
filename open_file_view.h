@@ -17,6 +17,7 @@ public:
 
   void show(Ctx* ctx) override;
   bool on_key(Ctx* ctx, int ch) override;
+  void on_search_text(const std::string& text, int skip) override;
 
 private:
   std::string m_path;
