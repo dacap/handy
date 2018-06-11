@@ -26,6 +26,7 @@ Some random notes about the "handy" UX:
   From this view it should be easy to create new files in the directory or navigate to other directories, open files, etc.
 * Editing mode by default with access to special modes with Ctrl+common shortcut (like `Ctrl+F` to find text in the document).
 * Git views: status, log, commit, and diff views.
+* Zip views: list files inside, view files, extract files (re-compress?).
 * General shortcuts guidelines:
   * Similar layout to [ergoprog](https://davidcapello.com/programming/keyboard-layout/) + modes
   * `Ctrl+Q`: closes the program (ask for saving changes)
