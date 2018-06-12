@@ -67,42 +67,42 @@ int Doc::get_char(cursor_t i) const {
   return (i >= 0 && i < m_buf.size() ? m_buf[i]: 0);
 }
 
-void Doc::insert(const cursor_t pos, const char* buf, const cursor_t n) {
+void Doc::insert(const cursor_t i, const char* buf, const cursor_t n) {
   const std::string tmp(buf, buf+n);
   m_undo.add(
     new Undoable(
-      [this, pos, tmp, n]{
-        insert_without_undo(pos, tmp.c_str(), tmp.size());
+      [this, i, tmp, n]{
+        insert_without_undo(i, tmp.c_str(), tmp.size());
       },
-      [this, pos, n]{
-        erase_without_undo(pos, n);
+      [this, i, n]{
+        erase_without_undo(i, n);
       }));
 }
 
-void Doc::erase(const cursor_t pos, const cursor_t n) {
-  const std::string tmp = m_buf.substr(pos, n);
+void Doc::erase(const cursor_t i, const cursor_t n) {
+  const std::string tmp = m_buf.substr(i, n);
   m_undo.add(
     new Undoable(
-      [this, pos, n]{
-        erase_without_undo(pos, n);
+      [this, i, n]{
+        erase_without_undo(i, n);
       },
-      [this, pos, tmp]{
-        insert_without_undo(pos, tmp.c_str(), tmp.size());
+      [this, i, tmp]{
+        insert_without_undo(i, tmp.c_str(), tmp.size());
       }));
 }
 
-void Doc::insert_without_undo(const cursor_t pos, const char* buf, const cursor_t n) {
-  m_cursors.update_cursors_from(pos, n);
-  m_buf.insert(pos, buf, n);
+void Doc::insert_without_undo(const cursor_t i, const char* buf, const cursor_t n) {
+  m_cursors.update_cursors_from(i, n);
+  m_buf.insert(i, buf, n);
 
-  m_last_modified_pos = pos+n;
+  m_last_modified_index = i+n;
 }
 
-void Doc::erase_without_undo(const cursor_t pos, const cursor_t n) {
-  m_cursors.update_cursors_from(pos+n, -n);
-  m_buf.erase(pos, n);
+void Doc::erase_without_undo(const cursor_t i, const cursor_t n) {
+  m_cursors.update_cursors_from(i+n, -n);
+  m_buf.erase(i, n);
 
-  m_last_modified_pos = pos;
+  m_last_modified_index = i;
 }
 
 void Doc::undo() {

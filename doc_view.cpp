@@ -38,9 +38,9 @@ std::string DocView::get_status_text() const {
     sprintf(buf, "Command? [s]ave [m]ore [q]uit");
   }
   else {
-    Point pos = m_doc->convert_cursor_to_point(cursor());
+    Point p = m_doc->convert_cursor_to_point(cursor());
     sprintf(buf, "-- %d:%d -- %s%s%s --",
-            pos.y+1, pos.x,
+            p.y+1, p.x,
             doc()->filename().c_str(),
             doc()->modified() ? " (*)": "",
             mode() == Mode::Ins ? " -- editing":
@@ -223,11 +223,11 @@ bool DocView::on_key(Ctx* ctx, int ch) {
         break;
       case 'z':               // Undo
         m_doc->undo();
-        set_cursor(m_doc->last_modified_pos());
+        set_cursor(m_doc->last_modified_index());
         break;
       case 'Z':               // Redo
         m_doc->redo();
-        set_cursor(m_doc->last_modified_pos());
+        set_cursor(m_doc->last_modified_index());
         break;
     }
   }
@@ -634,11 +634,11 @@ std::string DocView::sel_content()
 void DocView::update_scroll() {
   // Update scroll
   PanelPtr panel = this->panel();
-  Point pos = m_doc->convert_cursor_to_point(cursor());
+  Point p = m_doc->convert_cursor_to_point(cursor());
   Point scroll = this->scroll();
-  if (pos.x < scroll.x) scroll.x = pos.x;
-  if (pos.y < scroll.y) scroll.y = pos.y;
-  if (pos.x > scroll.x+panel->width()-1) scroll.x = pos.x-panel->width()+1;
-  if (pos.y > scroll.y+panel->height()-1) scroll.y = pos.y-panel->height()+1;
+  if (p.x < scroll.x) scroll.x = p.x;
+  if (p.y < scroll.y) scroll.y = p.y;
+  if (p.x > scroll.x+panel->width()-1) scroll.x = p.x-panel->width()+1;
+  if (p.y > scroll.y+panel->height()-1) scroll.y = p.y-panel->height()+1;
   set_scroll(scroll);
 }
