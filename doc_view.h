@@ -31,7 +31,6 @@ public:
 
   // View impl
   std::string get_status_text() const override;
-  Pos calc_pos(cursor_t j) const;
   void show(Ctx* ctx) override;
   bool on_key(Ctx* ctx, int ch) override;
   void on_search_text(const std::string& text, int skip) override;

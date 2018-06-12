@@ -38,7 +38,7 @@ std::string DocView::get_status_text() const {
     sprintf(buf, "Command? [s]ave [m]ore [q]uit");
   }
   else {
-    Pos pos = calc_pos(cursor());
+    Pos pos = m_doc->convert_cursor_to_pos(cursor());
     sprintf(buf, "-- %d:%d -- %s%s%s --",
             pos.y+1, pos.x,
             doc()->filename().c_str(),
@@ -47,30 +47,6 @@ std::string DocView::get_status_text() const {
             mode() == Mode::Sel ? " -- selecting": "");
   }
   return buf;
-}
-
-Pos DocView::calc_pos(cursor_t j) const {
-  PanelPtr panel = this->panel();
-  int w = panel->width();
-  int h = panel->height();
-  cursor_t i = 0;
-  Pos p;
-
-  for (auto ch : m_doc->str()) {
-    if (i == j)
-      break;
-
-    if (ch == '\n') {
-      p.x = 0;
-      ++p.y;
-    }
-    else
-      ++p.x;
-
-    ++i;
-  }
-
-  return p;
 }
 
 void DocView::show(Ctx* ctx) {
@@ -367,7 +343,7 @@ void DocView::next_char() {
 
 void DocView::prev_line() {
   cursor_t i = cursor();
-  int x = calc_pos(i).x;
+  int x = m_doc->convert_cursor_to_pos(i).x;
   if (i > 0 && m_doc->get_char(i) == '\n')
     --i;
   while (i > 0 && m_doc->get_char(i) != '\n')
@@ -376,7 +352,7 @@ void DocView::prev_line() {
   if (i == 0)
     return;
 
-  int u = calc_pos(i).x;
+  int u = m_doc->convert_cursor_to_pos(i).x;
   if (u > x) {
     while (u > x) {
       --i;
@@ -388,7 +364,7 @@ void DocView::prev_line() {
 
 void DocView::next_line() {
   cursor_t i = cursor();
-  int x = calc_pos(i).x;
+  int x = m_doc->convert_cursor_to_pos(i).x;
   while (i < m_doc->size() && m_doc->get_char(i) != '\n')
     ++i;
 
@@ -658,7 +634,7 @@ std::string DocView::sel_content()
 void DocView::update_scroll() {
   // Update scroll
   PanelPtr panel = this->panel();
-  Pos pos = calc_pos(cursor());
+  Pos pos = m_doc->convert_cursor_to_pos(cursor());
   Pos scroll = this->scroll();
   if (pos.x < scroll.x) scroll.x = pos.x;
   if (pos.y < scroll.y) scroll.y = pos.y;

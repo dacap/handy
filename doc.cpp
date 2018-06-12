@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2017 David Capello
+// Copyright (c) 2016-2018 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -113,4 +113,25 @@ void Doc::undo() {
 void Doc::redo() {
   if (m_undo.canRedo())
     m_undo.redo();
+}
+
+Pos Doc::convert_cursor_to_pos(const cursor_t j) {
+  cursor_t i = 0;
+  Pos p;
+
+  for (auto ch : m_buf) {
+    if (i == j)
+      break;
+
+    if (ch == '\n') {
+      p.x = 0;
+      ++p.y;
+    }
+    else
+      ++p.x;
+
+    ++i;
+  }
+
+  return p;
 }
