@@ -115,9 +115,9 @@ void Doc::redo() {
     m_undo.redo();
 }
 
-Pos Doc::convert_cursor_to_pos(const cursor_t j) {
+Point Doc::convert_cursor_to_point(const cursor_t j) {
   cursor_t i = 0;
-  Pos p;
+  Point p;
 
   for (auto ch : m_buf) {
     if (i == j)

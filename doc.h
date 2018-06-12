@@ -8,7 +8,7 @@
 
 #include "cursors.h"
 #include "doc_undo.h"
-#include "pos.h"
+#include "point.h"
 
 #include <fstream>
 #include <string>
@@ -44,7 +44,7 @@ public:
   void redo();
 
   cursor_t last_modified_pos() { return m_last_modified_pos; }
-  Pos convert_cursor_to_pos(cursor_t i);
+  Point convert_cursor_to_point(cursor_t i);
 
 private:
   void insert_without_undo(const cursor_t pos, const char* buf, const cursor_t n);

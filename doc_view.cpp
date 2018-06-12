@@ -28,7 +28,7 @@ void DocView::set_cursor(cursor_t i) {
   update_scroll();
 }
 
-void DocView::set_scroll(const Pos& scroll) {
+void DocView::set_scroll(const Point& scroll) {
   m_scroll = scroll;
 }
 
@@ -38,7 +38,7 @@ std::string DocView::get_status_text() const {
     sprintf(buf, "Command? [s]ave [m]ore [q]uit");
   }
   else {
-    Pos pos = m_doc->convert_cursor_to_pos(cursor());
+    Point pos = m_doc->convert_cursor_to_point(cursor());
     sprintf(buf, "-- %d:%d -- %s%s%s --",
             pos.y+1, pos.x,
             doc()->filename().c_str(),
@@ -57,7 +57,7 @@ void DocView::show(Ctx* ctx) {
   int h = panel->height();
   panel->clear();
 
-  Pos p, cursor_p(-1, -1);
+  Point p, cursor_p(-1, -1);
   cursor_t i = 0;
   cursor_t j = cursor();
 
@@ -343,7 +343,7 @@ void DocView::next_char() {
 
 void DocView::prev_line() {
   cursor_t i = cursor();
-  int x = m_doc->convert_cursor_to_pos(i).x;
+  int x = m_doc->convert_cursor_to_point(i).x;
   if (i > 0 && m_doc->get_char(i) == '\n')
     --i;
   while (i > 0 && m_doc->get_char(i) != '\n')
@@ -352,7 +352,7 @@ void DocView::prev_line() {
   if (i == 0)
     return;
 
-  int u = m_doc->convert_cursor_to_pos(i).x;
+  int u = m_doc->convert_cursor_to_point(i).x;
   if (u > x) {
     while (u > x) {
       --i;
@@ -364,7 +364,7 @@ void DocView::prev_line() {
 
 void DocView::next_line() {
   cursor_t i = cursor();
-  int x = m_doc->convert_cursor_to_pos(i).x;
+  int x = m_doc->convert_cursor_to_point(i).x;
   while (i < m_doc->size() && m_doc->get_char(i) != '\n')
     ++i;
 
@@ -634,8 +634,8 @@ std::string DocView::sel_content()
 void DocView::update_scroll() {
   // Update scroll
   PanelPtr panel = this->panel();
-  Pos pos = m_doc->convert_cursor_to_pos(cursor());
-  Pos scroll = this->scroll();
+  Point pos = m_doc->convert_cursor_to_point(cursor());
+  Point scroll = this->scroll();
   if (pos.x < scroll.x) scroll.x = pos.x;
   if (pos.y < scroll.y) scroll.y = pos.y;
   if (pos.x > scroll.x+panel->width()-1) scroll.x = pos.x-panel->width()+1;
