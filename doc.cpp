@@ -8,6 +8,8 @@
 
 #include "undo/undo_command.h"
 
+#include <functional>
+
 namespace {
 
 class Undoable : public undo::UndoCommand {
