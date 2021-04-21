@@ -1,0 +1,48 @@
+name: build
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+    - uses: ilammy/msvc-dev-cmd@v1
+      if: runner.os == 'Windows'
+    - name: Install Dependencies
+      shell: bash
+      run: |
+        if [[ "${{ runner.os }}" == "Windows" ]] ; then
+          export VCPKG_DEFAULT_TRIPLET=x64-windows-static
+          export VCPKG_LIBRARY_LINKAGE=static
+          vcpkg install pixman freetype harfbuzz
+        elif [[ "${{ runner.os }}" == "macOS" ]] ; then
+          brew install pixman freetype harfbuzz
+        else
+          sudo apt-get update -qq
+          sudo apt-get install -y \
+            libpixman-1-dev libfreetype6-dev libharfbuzz-dev \
+            libx11-dev libxcursor-dev libxi-dev
+        fi
+    - name: Generating Makefiles
+      shell: bash
+      run: |
+        if [[ "${{ runner.os }}" == "Windows" ]] ; then
+          cmake . -G "NMake Makefiles" \
+            -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake \
+            -DVCPKG_TARGET_TRIPLET=x64-windows-static
+        else
+          cmake . -G "Unix Makefiles"
+        fi
+    - name: Compiling
+      shell: bash
+      run: |
+        if [[ "${{ runner.os }}" == "Windows" ]] ; then
+          nmake
+        else
+          make
+        fi

@@ -1,7 +1,8 @@
 # handy text editor
-*Copyright (C) 2016-2018 David Capello*
+*Copyright (C) 2016-2021 David Capello*
 
-> Distributed under [MIT license](LICENSE.txt)
+[![build](https://github.com/dacap/handy/actions/workflows/build.yml/badge.svg)](https://github.com/dacap/handy/actions/workflows/build.yml)
+[![MIT Licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 
 An experimental text editor. This code is unstable, untested, used
 only for experimentation by David Capello.
