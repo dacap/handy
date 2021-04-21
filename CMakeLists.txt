@@ -1,5 +1,5 @@
 # handy text editor
-# Copyright (c) 2016-2018 David Capello
+# Copyright (c) 2016-2021 David Capello
 #
 # This file is released under the terms of the MIT license.
 # Read LICENSE.txt for more information.
@@ -18,42 +18,12 @@ add_subdirectory(clip)
 
 set(UNDO_TESTS OFF CACHE BOOL "Compile undo tests")
 add_subdirectory(undo)
+target_include_directories(undo PUBLIC .)
 
 if(APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 endif()
 
-set(PLATFORM_LIBS)
-set(TERM_SOURCES)
-if(UNIX)
-  find_library(CURSES_LIB NAMES curses)
-  list(APPEND PLATFORM_LIBS ${CURSES_LIB})
-  list(APPEND TERM_SOURCES term_curses.cpp)
-elseif(WIN32)
-  list(APPEND TERM_SOURCES term_win.cpp)
-endif()
-
-add_library(term-lib ${TERM_SOURCES})
-
-add_executable(handy
-  alert_view.cpp
-  app.cpp
-  clipboard.cpp
-  doc.cpp
-  doc_undo.cpp
-  doc_view.cpp
-  main.cpp
-  open_file_view.cpp
-  view.cpp)
-
-target_link_libraries(handy
-  term-lib
-  clip
-  undo
-  laf-base
-  ${PLATFORM_LIBS})
-
-if(UNIX)
-  add_executable(getkey tools/getkey.cpp)
-  target_link_libraries(getkey ${PLATFORM_LIBS})
-endif()
+add_subdirectory(term)
+add_subdirectory(app)
+add_subdirectory(tools)
