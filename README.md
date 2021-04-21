@@ -8,9 +8,9 @@ only for experimentation by David Capello.
 
 ## Concepts
 
-* [Doc](doc.h): a open document, associated to a file in disk when the document is loaded from a file/saved to a file.
-* [View](view.h): a view to visualize a document ([DocView](doc_view.h)), a browsing a file ([OpenFileView](open_file_view.h)), etc.
-* [Mode](view.h): a view can be in one of the following modes:
+* [Doc](app/doc.h): a open document, associated to a file in disk when the document is loaded from a file/saved to a file.
+* [View](app/view.h): a view to visualize a document ([DocView](app/doc_view.h)), a browsing a file ([OpenFileView](app/open_file_view.h)), etc.
+* [Mode](app/view.h): a view can be in one of the following modes:
   * `Mode::Nav`: Navigating document/view.
   * `Mode::Ins`: Inserting/editing text in the document.
   * `Mode::Cmd`: Calling a command by hand (entering command name).
