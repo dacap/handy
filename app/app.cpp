@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2017 David Capello
+// Copyright (c) 2016-2021 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -9,11 +9,14 @@
 #include "alert_view.h"
 #include "app.h"
 #include "base.h"
+#include "base/fs.h"
 #include "ctx.h"
 #include "doc_view.h"
+#include "lua.h"
 #include "view.h"
 
-App::App() {
+App::App(int argc, char* argv[])
+  : m_lua(new Lua) {
   m_running = true;
 
   m_main.reset(new Panel(0, 0, m_term.width(), m_term.height()-1));
@@ -24,6 +27,14 @@ App::App() {
   ViewPtr main_view(new DocView(DocPtr(new Doc)));
   m_views.push(main_view);
   main_view->set_panel(m_main);
+
+  m_lua->run_script(base::get_file_title_with_path(argv[0]) + ".lua");
+  m_lua->run_code("if init then init() end");
+}
+
+App::~App()
+{
+  m_lua->run_code("if exit then exit() end");
 }
 
 // Ctx impl

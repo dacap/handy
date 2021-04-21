@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2017 David Capello
+// Copyright (c) 2016-2021 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -13,13 +13,16 @@
 #include "doc_view.h"
 #include "view.h"
 
+#include <memory>
 #include <stack>
 #include <vector>
 
+class Lua;
+
 class App : public Ctx {
 public:
-
-  App();
+  App(int argc, char* argv[]);
+  ~App();
 
   // Ctx impl
   void close() override;
@@ -38,4 +41,5 @@ private:
   std::vector<PanelPtr> m_panels;
   PanelPtr m_main, m_status;
   std::stack<ViewPtr> m_views;
+  std::unique_ptr<Lua> m_lua;
 };

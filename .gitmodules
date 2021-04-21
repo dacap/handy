@@ -7,3 +7,6 @@
 [submodule "undo"]
 	path = undo
 	url = https://github.com/dacap/undo.git
+[submodule "lua"]
+	path = lua
+	url = https://github.com/lua/lua.git
