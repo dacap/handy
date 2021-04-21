@@ -28,7 +28,7 @@ Some random notes about the "handy" UX:
 * Git views: status, log, commit, and diff views.
 * Zip views: list files inside, view files, extract files (re-compress?).
 * General shortcuts guidelines:
-  * Similar layout to [ergoprog](https://davidcapello.com/programming/keyboard-layout/) + modes
+  * Similar layout to [handy-mode](https://github.com/superhandy/intro) + modes
   * `Ctrl+Q`: closes the program (ask for saving changes)
   * `Nav`: `J`/`I`/`L`/`K`=previous char/line and next char/line, `Enter`/`Space`/`Backspace`=enter to `Ins` mode
   * `Ins`: `Esc`=go back to `Nav` mode
