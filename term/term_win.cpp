@@ -1,32 +1,85 @@
 // handy text editor
-// Copyright (c) 2016 David Capello
+// Copyright (c) 2016-2021 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
 
 #include <windows.h>
 
-struct PanelImpl;
-struct TermImpl;
-#define TERM_IMPL
 #include "term.h"
 
-struct PanelImpl {
-  int x, y, w, h;
+class PanelWin : public Panel {
+  int m_x, m_y, m_w, m_h;
 
-  PanelImpl(int x, int y, int w, int h)
-    : x(x), y(y), w(w), h(h) {
+public:
+  PanelWin(int x, int y, int w, int h)
+    : m_x(x), m_y(y), m_w(w), m_h(h) {
   }
+
+  int x() const override {
+    return m_x;
+  }
+
+  int y() const override {
+    return m_y;
+  }
+
+  int width() const override {
+    return m_w;
+  }
+
+  int height() const override {
+    return m_h;
+  }
+
+  void clear() {
+    // TODO
+  }
+
+  void print(const char* s) {
+    // TODO
+  }
+
+  void print(const char ch) {
+    // TODO
+  }
+
+  void move(int x, int y) {
+    // TODO
+  }
+
+  void update() {
+    // TODO
+  }
+
+  void update_lines(int y, int h) {
+    // TODO
+  }
+
+  int get_char() {
+    // TODO
+    return 0;
+  }
+
+  void attr_reverse() {
+    // TODO
+  }
+
+  void attr_normal() {
+    // TODO
+  }
+
 };
 
-struct TermImpl {
+class TermWin : public Term {
   HANDLE hstdout;
 
-  TermImpl() {
+public:
+  TermWin() {
     hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
   }
 
-  int width() {
+  int width() const override {
     CONSOLE_SCREEN_BUFFER_INFO info;
     if (GetConsoleScreenBufferInfo(hstdout, &info))
       return info.srWindow.Right - info.srWindow.Left;
@@ -34,89 +87,21 @@ struct TermImpl {
       return 80;
   }
 
-  int height() {
+  int height() const override {
     CONSOLE_SCREEN_BUFFER_INFO info;
     if (GetConsoleScreenBufferInfo(hstdout, &info))
       return info.srWindow.Bottom - info.srWindow.Top;
     else
       return 25;
   }
+
+  PanelPtr makePanel(int x, int y, int w, int h) override {
+    return std::make_shared<PanelWin>(x, y, w, h);
+  }
+
 };
 
-Panel::Panel(int x, int y, int w, int h)
-  : m_impl(new PanelImpl(x, y, w, h)) {
-}
-
-Panel::~Panel() {
-  delete m_impl;
-}
-
-int Panel::x() {
-  return m_impl->x;
-}
-
-int Panel::y() {
-  return m_impl->y;
-}
-
-int Panel::width() {
-  return m_impl->w;
-}
-
-int Panel::height() {
-  return m_impl->h;
-}
-
-void Panel::clear() {
-  // TODO
-}
-
-void Panel::print(const char* s) {
-  // TODO
-}
-
-void Panel::print(const char ch) {
-  // TODO
-}
-
-void Panel::move(int x, int y) {
-  // TODO
-}
-
-void Panel::update() {
-  // TODO
-}
-
-void Panel::update_lines(int y, int h) {
-  // TODO
-}
-
-int Panel::get_char() {
-  // TODO
-  return 0;
-}
-
-void Panel::attr_reverse()
-{
-  // TODO
-}
-
-void Panel::attr_normal()
-{
-  // TODO
-}
-
-Term::Term() : m_impl(new TermImpl) {
-}
-
-Term::~Term() {
-  delete m_impl;
-}
-
-int Term::width() {
-  return m_impl->width();
-}
-
-int Term::height() {
-  return m_impl->height();
+// static
+TermPtr Term::MakeTUI() {
+  return std::make_shared<TermWin>();
 }

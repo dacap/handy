@@ -16,11 +16,12 @@
 #include "view.h"
 
 App::App(int argc, char* argv[])
-  : m_lua(new Lua) {
+  : m_lua(new Lua)
+  , m_term(Term::MakeTUI()) {
   m_running = true;
 
-  m_main.reset(new Panel(0, 0, m_term.width(), m_term.height()-1));
-  m_status.reset(new Panel(0, m_term.height()-1, m_term.width(), 1));
+  m_main = m_term->makePanel(0, 0, m_term->width(), m_term->height()-1);
+  m_status = m_term->makePanel(0, m_term->height()-1, m_term->width(), 1);
   m_panels.push_back(m_main);
   m_panels.push_back(m_status);
 

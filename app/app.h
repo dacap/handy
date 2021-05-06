@@ -37,7 +37,7 @@ public:
 
 private:
   bool m_running;
-  Term m_term;
+  TermPtr m_term;
   std::vector<PanelPtr> m_panels;
   PanelPtr m_main, m_status;
   std::stack<ViewPtr> m_views;

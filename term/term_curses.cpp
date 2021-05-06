@@ -1,108 +1,122 @@
 // handy text editor
-// Copyright (c) 2016 David Capello
+// Copyright (c) 2016-2021 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
 
 #include <curses.h>
 
-typedef WINDOW PanelImpl;
-struct TermImpl { };
-#define TERM_IMPL
 #include "term.h"
 
-Panel::Panel(int x, int y, int w, int h) {
-  m_impl = newwin(h, w, y, x);
-  raw();
-  keypad(m_impl, TRUE);
-  meta(m_impl, TRUE);
-}
+class PanelCurses : public Panel {
+  WINDOW* m_win;
+public:
 
-Panel::~Panel() {
-  delwin(m_impl);
-}
+  PanelCurses(int x, int y, int w, int h) {
+    m_win = newwin(h, w, y, x);
+    raw();
+    keypad(m_win, TRUE);
+    meta(m_win, TRUE);
+  }
 
-int Panel::x() {
-  int y, x;
-  getbegyx(m_impl, y, x);
-  return x;
-}
+  ~PanelCurses() override {
+    delwin(m_win);
+  }
 
-int Panel::y() {
-  int y, x;
-  getbegyx(m_impl, y, x);
-  return y;
-}
+  int x() const override {
+    int y, x;
+    getbegyx(m_win, y, x);
+    return x;
+  }
 
-int Panel::width() {
-  int y, x;
-  getmaxyx(m_impl, y, x);
-  return x;
-}
+  int y() const override {
+    int y, x;
+    getbegyx(m_win, y, x);
+    return y;
+  }
 
-int Panel::height() {
-  int y, x;
-  getmaxyx(m_impl, y, x);
-  return y;
-}
+  int width() const override {
+    int y, x;
+    getmaxyx(m_win, y, x);
+    return x;
+  }
 
-void Panel::clear() {
-  wclear(m_impl);
-}
+  int height() const override {
+    int y, x;
+    getmaxyx(m_win, y, x);
+    return y;
+  }
 
-void Panel::print(const char* s) {
-  wprintw(m_impl, s);
-}
+  void clear() override {
+    wclear(m_win);
+  }
 
-void Panel::print(const char ch) {
-  waddch(m_impl, ch);
-}
+  void print(const char* s) override {
+    wprintw(m_win, s);
+  }
 
-void Panel::move(int x, int y) {
-  wmove(m_impl, y, x);
-}
+  void print(const char ch) override {
+    waddch(m_win, ch);
+  }
 
-void Panel::update() {
-  wrefresh(m_impl);
-}
+  void move(int x, int y) override {
+    wmove(m_win, y, x);
+  }
 
-void Panel::update_lines(int y, int h) {
-  wredrawln(m_impl, y, h);
-}
+  void update() override {
+    wrefresh(m_win);
+  }
 
-int Panel::get_char() {
-  return wgetch(m_impl);
-}
+  void update_lines(int y, int h) override {
+    wredrawln(m_win, y, h);
+  }
 
-void Panel::attr_reverse()
-{
-  wattron(m_impl, A_REVERSE);
-}
+  int get_char() override {
+    return wgetch(m_win);
+  }
 
-void Panel::attr_normal()
-{
-  wattroff(m_impl, A_REVERSE);
-}
+  void attr_reverse() override {
+    wattron(m_win, A_REVERSE);
+  }
 
-Term::Term() : m_impl(nullptr) {
-  initscr();
-  cbreak();
-  noecho();
-  keypad(stdscr, TRUE);
-}
+  void attr_normal() override {
+    wattroff(m_win, A_REVERSE);
+  }
 
-Term::~Term() {
-  endwin();
-}
+};
 
-int Term::width() {
-  int y, x;
-  getmaxyx(stdscr, y, x);
-  return x;
-}
+class TermCurses : public Term {
+public:
+  TermCurses() {
+    initscr();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+  }
 
-int Term::height() {
-  int y, x;
-  getmaxyx(stdscr, y, x);
-  return y;
+  ~TermCurses() override {
+    endwin();
+  }
+
+  int width() const override {
+    int y, x;
+    getmaxyx(stdscr, y, x);
+    return x;
+  }
+
+  int height() const override {
+    int y, x;
+    getmaxyx(stdscr, y, x);
+    return y;
+  }
+
+  PanelPtr makePanel(int x, int y, int w, int h) override {
+    return std::make_shared<PanelCurses>(x, y, w, h);
+  }
+
+};
+
+// static
+TermPtr Term::MakeTUI() {
+  return std::make_shared<TermCurses>();
 }
