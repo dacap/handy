@@ -17,8 +17,25 @@
 
 App::App(int argc, char* argv[])
   : m_lua(new Lua)
-  , m_term(Term::MakeTUI()) {
+  , m_term(nullptr) {
   m_running = true;
+
+  for (int i=0; i<argc; ++i) {
+    if (std::strcmp(argv[i], "-tui") == 0) {
+      m_term = Term::MakeTUI();
+    }
+    else if (std::strcmp(argv[i], "-gui") == 0) {
+      m_term = Term::MakeGUI();
+    }
+  }
+
+  if (!m_term) {
+#if LAF_SKIA
+    m_term = Term::MakeGUI();
+#else
+    m_term = Term::MakeTUI();
+#endif
+  }
 
   m_main = m_term->makePanel(0, 0, m_term->width(), m_term->height()-1);
   m_status = m_term->makePanel(0, m_term->height()-1, m_term->width(), 1);

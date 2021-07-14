@@ -14,6 +14,14 @@ elseif(WIN32)
   list(APPEND TERM_SOURCES term_win.cpp)
 endif()
 
+if(LAF_BACKEND STREQUAL "skia")
+  list(APPEND TERM_SOURCES term_laf.cpp)
+endif()
+
 add_library(term ${TERM_SOURCES})
 target_include_directories(term PUBLIC .)
 target_link_libraries(term ${PLATFORM_LIBS})
+
+if(LAF_BACKEND STREQUAL "skia")
+  target_link_libraries(term laf-os)
+endif()

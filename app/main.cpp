@@ -7,7 +7,12 @@
 #include "app.h"
 #include "base/fs.h"
 
-int main(int argc, char* argv[]) {
+#if LAF_SKIA
+int app_main(int argc, char* argv[])
+#else
+int main(int argc, char* argv[])
+#endif
+{
   App app(argc, argv);
 
   for (int i=1; i<argc; ++i)
@@ -16,4 +21,6 @@ int main(int argc, char* argv[]) {
 
   while (app.is_running())
     app.loop();
+
+  return 0;
 }
