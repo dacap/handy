@@ -25,7 +25,12 @@ App::App(int argc, char* argv[])
       m_term = Term::MakeTUI();
     }
     else if (std::strcmp(argv[i], "-gui") == 0) {
+#if LAF_SKIA
       m_term = Term::MakeGUI();
+#else
+      std::printf("There isn't GUI support");
+      exit(1);
+#endif
     }
   }
 
