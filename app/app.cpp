@@ -15,6 +15,8 @@
 #include "lua.h"
 #include "view.h"
 
+#include <cstring>
+
 App::App(int argc, char* argv[])
   : m_lua(new Lua)
   , m_term(nullptr) {
