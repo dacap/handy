@@ -1,10 +1,11 @@
 // handy text editor
-// Copyright (c) 2021 David Capello
+// Copyright (c) 2021-2024 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
 
 #include "os/os.h"
+#include "text/text.h"
 
 #include "term.h"
 
@@ -16,7 +17,8 @@ public:
   virtual ~TermDelegate() { }
   virtual os::Window* window() = 0;
   virtual gfx::Size charSize() = 0;
-  virtual os::Font* font() = 0;
+  virtual text::FontRef font() = 0;
+  virtual text::FontMgrRef fontMgr() = 0;
 };
 
 static Panel* m_curPanel = nullptr;
@@ -110,7 +112,7 @@ public:
   void update() override {
     os::Window* window = m_delegate->window();
     os::Surface* surface = window->surface();
-    os::Font* font = m_delegate->font();
+    text::FontRef font = m_delegate->font();
     gfx::Size charSize = m_delegate->charSize();
     os::Paint fg, bg;
     fg.color(gfx::rgba(255, 255, 255));
@@ -139,11 +141,21 @@ public:
         rgn |= gfx::Region(charRc);
         surface->drawRect(charRc, (at & REVERSE ? fg: bg));
 
-        os::draw_text(surface, font, buf,
-                      gfx::Point(pt.x+charSize.w/2,
-                                 pt.y+charSize.h*3/4),
-                      (at & REVERSE ? &bg: &fg),
-                      os::TextAlign::Center);
+#if 1
+        text::draw_text(
+          surface, font, buf,
+          gfx::PointF(pt.x+charSize.w/2,
+                      pt.y+charSize.h*3/4),
+          (at & REVERSE ? &bg: &fg),
+          text::TextAlign::Center);
+#else
+        text::draw_text_with_shaper(
+          surface, m_delegate->fontMgr(), font, buf,
+          gfx::PointF(pt.x, pt.y),
+          (at & REVERSE ? &bg: &fg),
+          text::TextAlign::Left);
+#endif
+
         pt.x += charSize.w;
       }
       pt.x = m_rc.x*charSize.w;
@@ -167,7 +179,7 @@ public:
   }
 
   int get_char() override {
-    os::EventQueue* q = os::instance()->eventQueue();
+    os::EventQueue* q = os::System::instance()->eventQueue();
     os::Event ev;
     while (true) {
       q->getEvent(ev, os::EventQueue::kWithoutTimeout);
@@ -235,28 +247,36 @@ class TermLaf : public Term
               , public TermDelegate {
   os::SystemRef m_system;
   os::WindowRef m_window;
-  os::FontRef m_font;
+  text::FontMgrRef m_fontMgr;
+  text::FontRef m_font;
   gfx::Size m_charSize;
   gfx::Size m_termSize;
 
 public:
   TermLaf() {
-    m_system = os::make_system();
+    m_system = os::System::make();
     m_system->setAppMode(os::AppMode::GUI);
+    // m_system->setTranslateDeadKeys(true);
+
+    m_fontMgr = text::FontMgr::Make();
 
     // TODO load a mono-space font
-    // {
-    //   Ref<FontStyleSet> set = m_system->fontManager()->matchFamily(...);
-    //   m_font = ...;
-    // }
+    m_font = m_fontMgr->defaultFont(18);
 
-    m_window = m_system->makeWindow(800, 500);
+    text::FontMetrics metrics;
+    float width = metrics.avgCharWidth;
+    float height = m_font->metrics(&metrics);
+    if (width < 1.0f) {
+      width = m_font->textLength("x")+2;
+    }
+    m_charSize = gfx::Size(width, height);
+
+    m_window = m_system->makeWindow(m_charSize.w*80, m_charSize.h*25);
     m_window->setCursor(os::NativeCursor::Arrow);
     m_system->finishLaunching();
     m_system->activateApp();
     m_window->setVisible(true);
 
-    m_charSize = gfx::Size(8, 20); // TODO
     m_termSize.w = m_window->surface()->width() / m_charSize.w;
     m_termSize.h = m_window->surface()->height() / m_charSize.h;
   }
@@ -280,7 +300,8 @@ public:
   // TermDelegate impl
   os::Window* window() override { return m_window.get(); }
   gfx::Size charSize() override { return m_charSize; }
-  os::Font* font() override { return m_font.get(); }
+  text::FontRef font() override { return m_font; }
+  text::FontMgrRef fontMgr() override { return m_fontMgr; }
 
 };
 

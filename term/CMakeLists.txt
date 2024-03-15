@@ -1,5 +1,5 @@
 # handy text editor
-# Copyright (c) 2021 David Capello
+# Copyright (c) 2021-2024 David Capello
 #
 # This file is released under the terms of the MIT license.
 # Read LICENSE.txt for more information.
@@ -23,5 +23,5 @@ target_include_directories(term PUBLIC .)
 target_link_libraries(term ${PLATFORM_LIBS})
 
 if(LAF_BACKEND STREQUAL "skia")
-  target_link_libraries(term laf-os)
+  target_link_libraries(term laf-os laf-text)
 endif()
