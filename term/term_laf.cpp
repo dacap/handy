@@ -169,6 +169,8 @@ public:
                        (m_rc.y+m_pt.y)*charSize.h,
                        charSize.w, charSize.h);
       surface->drawRect(charRc, fg);
+
+      rgn |= gfx::Region(charRc);
     }
 
     window->invalidateRegion(rgn);
