@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2018 David Capello
+// Copyright (c) 2016-2024 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -191,7 +191,7 @@ bool DocView::on_key(Ctx* ctx, int ch) {
         set_mode(Mode::Ins);
         return true;
       case 15:
-        ctx->set_view(ViewPtr(new OpenFileView));
+        ctx->set_view(std::make_shared<OpenFileView>());
         return true;
       case ' ':
       case 127: // Space and backspace start ins mode modifying the doc
@@ -281,7 +281,7 @@ bool DocView::on_key(Ctx* ctx, int ch) {
         quit(ctx);
         return true;
       case 'f':
-        ctx->set_view(ViewPtr(new OpenFileView));
+        ctx->set_view(std::make_shared<OpenFileView>());
         break;
       case 's':
         doc()->save();

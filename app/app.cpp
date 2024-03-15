@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2021 David Capello
+// Copyright (c) 2016-2024 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -49,7 +49,7 @@ App::App(int argc, char* argv[])
   m_panels.push_back(m_main);
   m_panels.push_back(m_status);
 
-  ViewPtr main_view(new DocView(DocPtr(new Doc)));
+  ViewPtr main_view = std::make_shared<DocView>(std::make_shared<Doc>());
   m_views.push(main_view);
   main_view->set_panel(m_main);
 
@@ -88,7 +88,7 @@ void App::back_view() {
 }
 
 int App::alert(const char* msg) {
-  ViewPtr alert_view(new AlertView(msg));
+  ViewPtr alert_view = std::make_shared<AlertView>(msg);
   set_view(alert_view);
   while (is_running() && view() == alert_view)
     loop();
@@ -109,7 +109,7 @@ void App::loop() {
 }
 
 void App::open_file(const char* fn) {
-  DocPtr doc(new Doc);
+  DocPtr doc = std::make_shared<Doc>();
   if (doc->load(fn))
-    set_view(ViewPtr(new DocView(doc)));
+    set_view(std::make_shared<DocView>(doc));
 }
