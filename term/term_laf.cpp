@@ -219,13 +219,15 @@ public:
               if (ev.modifiers() & os::kKeyShiftModifier)
                 return 393;     // KEY_SLEFT
               else
-                return 260;     // KEY_LEFT
+                return KEY_LEFT;
             case os::kKeyRight:
               if (ev.modifiers() & os::kKeyShiftModifier)
                 return 402;     // KEY_SRIGHT
               else
-                return 261;     // KEY_RIGHT
+                return KEY_RIGHT;
             case os::kKeyBackspace: return 127;
+            case os::kKeyPageUp: return KEY_PPAGE;
+            case os::kKeyPageDown: return KEY_NPAGE;
             default:
               return ev.unicodeChar();
           }

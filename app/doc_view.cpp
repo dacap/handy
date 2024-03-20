@@ -149,9 +149,11 @@ bool DocView::on_key(Ctx* ctx, int ch) {
         next_line();
         return true;
       case 'I':
+      case KEY_PPAGE:
         prev_page();
         return true;
       case 'K':
+      case KEY_NPAGE:
         next_page();
         return true;
       case 'J':
@@ -238,6 +240,8 @@ bool DocView::on_key(Ctx* ctx, int ch) {
       case KEY_RIGHT: next_char(); return true;
       case KEY_UP:    prev_line(); return true;
       case KEY_DOWN:  next_line(); return true;
+      case KEY_PPAGE: prev_page(); return true;
+      case KEY_NPAGE: next_page(); return true;
       case 27:
         set_mode(Mode::Nav);
         break;

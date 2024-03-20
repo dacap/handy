@@ -19,6 +19,11 @@
   #define KEY_RIGHT 261
 #endif // KEY_DOWN
 
+#ifndef KEY_NPAGE
+  #define KEY_NPAGE 338
+  #define KEY_PPAGE 339
+#endif
+
 class Panel;
 class Term;
 
