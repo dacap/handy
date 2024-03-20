@@ -115,9 +115,9 @@ public:
     text::FontRef font = m_delegate->font();
     gfx::Size charSize = m_delegate->charSize();
     os::Paint fg, bg;
-    fg.color(gfx::rgba(255, 255, 255));
+    fg.color(gfx::rgba(230, 230, 230));
     fg.style(os::Paint::Fill);
-    bg.color(gfx::rgba(0, 0, 0));
+    bg.color(gfx::rgba(46, 46, 50));
     bg.style(os::Paint::Fill);
 
     gfx::Region rgn;
