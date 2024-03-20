@@ -49,7 +49,7 @@ App::App(int argc, char* argv[])
   m_panels.push_back(m_main);
   m_panels.push_back(m_status);
 
-  ViewPtr main_view = std::make_shared<DocView>(std::make_shared<Doc>());
+  auto main_view = std::make_shared<DocView>(std::make_shared<Doc>());
   m_views.push(main_view);
   main_view->set_panel(m_main);
 
@@ -88,11 +88,11 @@ void App::back_view() {
 }
 
 int App::alert(const char* msg) {
-  ViewPtr alert_view = std::make_shared<AlertView>(msg);
+  auto alert_view = std::make_shared<AlertView>(msg);
   set_view(alert_view);
   while (is_running() && view() == alert_view)
     loop();
-  return ((AlertView*)alert_view.get())->result();
+  return alert_view->result();
 }
 
 bool App::is_running() const {
@@ -109,7 +109,7 @@ void App::loop() {
 }
 
 void App::open_file(const char* fn) {
-  DocPtr doc = std::make_shared<Doc>();
+  auto doc = std::make_shared<Doc>();
   if (doc->load(fn))
     set_view(std::make_shared<DocView>(doc));
 }
