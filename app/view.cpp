@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2018 David Capello
+// Copyright (c) 2016-2024 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -30,12 +30,12 @@ void View::show(Ctx* ctx) {
   ctx->status()->update();
 }
 
-bool View::on_key(Ctx* ctx, int ch) {
+bool View::on_key(Ctx* ctx, const Key& key) {
   // Searching text
   if (mode() == Mode::Sea) {
-    switch (ch) {
-      case 10:
-      case 27:
+    switch (key.scancode) {
+      case Key::Scancode::Enter:
+      case Key::Scancode::Escape:
         // Back to previous mode
         if (m_old_modes.empty())
           set_mode(Mode::Nav);
@@ -45,15 +45,15 @@ bool View::on_key(Ctx* ctx, int ch) {
           set_mode(restore_mode);
         }
         return true;
-      case 127: // Backspace remove text
+      case Key::Scancode::Backspace: // Backspace remove text
         if (!m_searching_text.empty()) {
           m_searching_text.erase(--m_searching_text.end());
           on_search_text(m_searching_text);
         }
         break;
       default:
-        if (ch >= 32 && ch < 256) {
-          m_searching_text.push_back(ch);
+        if (key.codepoint != 0) {
+          m_searching_text.push_back(key.codepoint);
           on_search_text(m_searching_text);
         }
         break;

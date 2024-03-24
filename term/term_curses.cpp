@@ -1,12 +1,86 @@
 // handy text editor
-// Copyright (c) 2016-2021 David Capello
+// Copyright (c) 2016-2024 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
 
 #include <curses.h>
 
+#include "event.h"
 #include "term.h"
+
+static Key key_from_curses_char(int ch) {
+  Key key;
+
+  switch (ch) {
+
+    case 10:
+      key.scancode = Key::Scancode::Enter;
+      break;
+
+    case 27:
+      key.scancode = Key::Scancode::Escape;
+      break;
+
+    case 32:
+      key.scancode = Key::Scancode::Space;
+      key.codepoint = ' ';
+      break;
+
+    case KEY_DOWN:      key.scancode = Key::Scancode::ArrowDown;  break;
+    case KEY_UP:        key.scancode = Key::Scancode::ArrowUp;    break;
+    case KEY_LEFT:      key.scancode = Key::Scancode::ArrowLeft;  break;
+    case KEY_RIGHT:     key.scancode = Key::Scancode::ArrowRight; break;
+
+    case 127:
+    case KEY_BACKSPACE:
+      key.scancode = Key::Scancode::Backspace;
+      break;
+
+    case KEY_PPAGE:     key.scancode = Key::Scancode::PageUp;     break;
+    case KEY_NPAGE:     key.scancode = Key::Scancode::PageDown;   break;
+
+    case KEY_SHOME:
+      key.modifiers = Key::Modifiers::Shift;
+      [[fallthrough]];
+    case KEY_HOME:
+      key.scancode = Key::Scancode::Home;
+      break;
+
+    case KEY_SEND:
+      key.modifiers = Key::Modifiers::Shift;
+      [[fallthrough]];
+    case KEY_END:
+      key.scancode = Key::Scancode::End;
+      break;
+
+    default:
+      // Ctrl+A ... Ctrl+Z
+      if (ch >= 1 && ch < 27) {
+        key.scancode = Key::Scancode(int(Key::Scancode::KeyA) + ch - 1);
+        key.modifiers = Key::Modifiers::Ctrl;
+      }
+      // A ... Z
+      else if (ch >= 'A' && ch <= 'Z') {
+        key.scancode = Key::Scancode(int(Key::Scancode::KeyA) + ch - 'A');
+        key.modifiers = Key::Modifiers::Shift;
+        key.codepoint = ch;
+      }
+      // a ... z
+      else if (ch >= 'a' && ch <= 'z') {
+        key.scancode = Key::Scancode(int(Key::Scancode::KeyA) + ch - 'a');
+        key.codepoint = ch;
+      }
+      // 0 ... 9
+      else if (ch >= '0' && ch <= '9') {
+        key.scancode = Key::Scancode(int(Key::Scancode::Digit0) + ch - '0');
+        key.codepoint = ch;
+      }
+      break;
+
+  }
+  return key;
+}
 
 class PanelCurses : public Panel {
   WINDOW* m_win;
@@ -71,8 +145,15 @@ public:
     wredrawln(m_win, y, h);
   }
 
-  int get_char() override {
-    return wgetch(m_win);
+  Event get_event() override {
+    Event ev(Event::Type::Key);
+
+    // Get key from ncurses
+    int ch = wgetch(m_win);
+    Key key = key_from_curses_char(ch);
+
+    ev.key(key);
+    return ev;
   }
 
   void attr_reverse() override {

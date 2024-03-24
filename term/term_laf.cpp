@@ -7,10 +7,160 @@
 #include "os/os.h"
 #include "text/text.h"
 
+#include "event.h"
 #include "term.h"
 
 #include <algorithm>
 #include <vector>
+
+static Key::Scancode from_laf_scancode(const os::KeyScancode from) {
+  static Key::Scancode map[] {
+    Key::Scancode::NoScancode,     // kKeyNil
+    Key::Scancode::KeyA,           // kKeyA
+    Key::Scancode::KeyB,           // kKeyB
+    Key::Scancode::KeyC,           // kKeyC
+    Key::Scancode::KeyD,           // kKeyD
+    Key::Scancode::KeyE,           // kKeyE
+    Key::Scancode::KeyF,           // kKeyF
+    Key::Scancode::KeyG,           // kKeyG
+    Key::Scancode::KeyH,           // kKeyH
+    Key::Scancode::KeyI,           // kKeyI
+    Key::Scancode::KeyJ,           // kKeyJ
+    Key::Scancode::KeyK,           // kKeyK
+    Key::Scancode::KeyL,           // kKeyL
+    Key::Scancode::KeyM,           // kKeyM
+    Key::Scancode::KeyN,           // kKeyN
+    Key::Scancode::KeyO,           // kKeyO
+    Key::Scancode::KeyP,           // kKeyP
+    Key::Scancode::KeyQ,           // kKeyQ
+    Key::Scancode::KeyR,           // kKeyR
+    Key::Scancode::KeyS,           // kKeyS
+    Key::Scancode::KeyT,           // kKeyT
+    Key::Scancode::KeyU,           // kKeyU
+    Key::Scancode::KeyV,           // kKeyV
+    Key::Scancode::KeyW,           // kKeyW
+    Key::Scancode::KeyX,           // kKeyX
+    Key::Scancode::KeyY,           // kKeyY
+    Key::Scancode::KeyZ,           // kKeyZ
+    Key::Scancode::Digit0,         // kKey0
+    Key::Scancode::Digit1,         // kKey1
+    Key::Scancode::Digit2,         // kKey2
+    Key::Scancode::Digit3,         // kKey3
+    Key::Scancode::Digit4,         // kKey4
+    Key::Scancode::Digit5,         // kKey5
+    Key::Scancode::Digit6,         // kKey6
+    Key::Scancode::Digit7,         // kKey7
+    Key::Scancode::Digit8,         // kKey8
+    Key::Scancode::Digit9,         // kKey9
+    Key::Scancode::Numpad0,        // kKey0Pad
+    Key::Scancode::Numpad1,        // kKey1Pad
+    Key::Scancode::Numpad2,        // kKey2Pad
+    Key::Scancode::Numpad3,        // kKey3Pad
+    Key::Scancode::Numpad4,        // kKey4Pad
+    Key::Scancode::Numpad5,        // kKey5Pad
+    Key::Scancode::Numpad6,        // kKey6Pad
+    Key::Scancode::Numpad7,        // kKey7Pad
+    Key::Scancode::Numpad8,        // kKey8Pad
+    Key::Scancode::Numpad9,        // kKey9Pad
+    Key::Scancode::F1,             // kKeyF1
+    Key::Scancode::F2,             // kKeyF2
+    Key::Scancode::F3,             // kKeyF3
+    Key::Scancode::F4,             // kKeyF4
+    Key::Scancode::F5,             // kKeyF5
+    Key::Scancode::F6,             // kKeyF6
+    Key::Scancode::F7,             // kKeyF7
+    Key::Scancode::F8,             // kKeyF8
+    Key::Scancode::F9,             // kKeyF9
+    Key::Scancode::F10,            // kKeyF10
+    Key::Scancode::F11,            // kKeyF11
+    Key::Scancode::F12,            // kKeyF12
+    Key::Scancode::Escape,         // kKeyEsc
+    Key::Scancode::Backquote,      // kKeyTilde
+    Key::Scancode::Minus,          // kKeyMinus
+    Key::Scancode::Equal,          // kKeyEquals
+    Key::Scancode::Backspace,      // kKeyBackspace
+    Key::Scancode::Tab,            // kKeyTab
+    Key::Scancode::BracketLeft,    // kKeyOpenbrace
+    Key::Scancode::BracketRight,   // kKeyClosebrace
+    Key::Scancode::Enter,          // kKeyEnter
+    Key::Scancode::NoScancode,     // kKeyColon
+    Key::Scancode::Quote,          // kKeyQuote
+    Key::Scancode::Backslash,      // kKeyBackslash
+    Key::Scancode::IntlBackslash,  // kKeyBackslash2
+    Key::Scancode::Comma,          // kKeyComma
+    Key::Scancode::Period,         // kKeyStop
+    Key::Scancode::Slash,          // kKeySlash
+    Key::Scancode::Space,          // kKeySpace
+    Key::Scancode::Insert,         // kKeyInsert
+    Key::Scancode::Delete,         // kKeyDel
+    Key::Scancode::Home,           // kKeyHome
+    Key::Scancode::End,            // kKeyEnd
+    Key::Scancode::PageUp,         // kKeyPageUp
+    Key::Scancode::PageDown,       // kKeyPageDown
+    Key::Scancode::ArrowLeft,      // kKeyLeft
+    Key::Scancode::ArrowRight,     // kKeyRight
+    Key::Scancode::ArrowUp,        // kKeyUp
+    Key::Scancode::ArrowDown,      // kKeyDown
+    Key::Scancode::NumpadDivide,   // kKeySlashPad
+    Key::Scancode::NumpadMultiply, // kKeyAsterisk
+    Key::Scancode::NumpadSubtract, // kKeyMinusPad
+    Key::Scancode::NumpadAdd,      // kKeyPlusPad
+    Key::Scancode::NumpadDecimal,  // kKeyDelPad
+    Key::Scancode::NumpadEnter,    // kKeyEnterPad
+    Key::Scancode::PrintScreen,    // kKeyPrtscr
+    Key::Scancode::Pause,          // kKeyPause
+    Key::Scancode::NoScancode,     // kKeyAbntC1
+    Key::Scancode::IntlYen,        // kKeyYen
+    Key::Scancode::KanaMode,       // kKeyKana
+    Key::Scancode::Convert,        // kKeyConvert
+    Key::Scancode::NonConvert,     // kKeyNoconvert
+    Key::Scancode::NoScancode,     // kKeyAt
+    Key::Scancode::NoScancode,     // kKeyCircumflex
+    Key::Scancode::NoScancode,     // kKeyColon2
+    Key::Scancode::NoScancode,     // kKeyKanji
+    Key::Scancode::NumpadEqual,    // kKeyEqualsPad
+    Key::Scancode::Backquote,      // kKeyBackquote
+    Key::Scancode::Semicolon,      // kKeySemicolon
+    Key::Scancode::NoScancode,     // kKeyUnknown1
+    Key::Scancode::NoScancode,     // kKeyUnknown2
+    Key::Scancode::NoScancode,     // kKeyUnknown3
+    Key::Scancode::NoScancode,     // kKeyUnknown4
+    Key::Scancode::NoScancode,     // kKeyUnknown5
+    Key::Scancode::NoScancode,     // kKeyUnknown6
+    Key::Scancode::NoScancode,     // kKeyUnknown7
+    Key::Scancode::NoScancode,     // kKeyUnknown8
+    Key::Scancode::NoScancode,     // kKeyLShift
+    Key::Scancode::NoScancode,     // kKeyRShift
+    Key::Scancode::NoScancode,     // kKeyLControl
+    Key::Scancode::NoScancode,     // kKeyRControl
+    Key::Scancode::NoScancode,     // kKeyAlt
+    Key::Scancode::NoScancode,     // kKeyAltGr
+    Key::Scancode::NoScancode,     // kKeyLWin
+    Key::Scancode::NoScancode,     // kKeyRWin
+    Key::Scancode::NoScancode,     // kKeyMenu
+    Key::Scancode::NoScancode,     // kKeyCommand
+    Key::Scancode::NoScancode,     // kKeyScrLock
+    Key::Scancode::NoScancode,     // kKeyNumLock
+    Key::Scancode::NoScancode,     // kKeyCapsLock
+  };
+  if (from >= 0 && from < os::kKeyScancodes)
+    return map[from];
+  else
+    return Key::Scancode::NoScancode;
+}
+
+static Key::Modifiers from_laf_modifiers(const os::KeyModifiers from) {
+  Key::Modifiers to = Key::Modifiers::NoModifiers;
+  if (from & os::kKeyShiftModifier)
+    to = Key::Modifiers(int(to) | int(Key::Modifiers::Shift));
+  if (from & os::kKeyCtrlModifier)
+    to = Key::Modifiers(int(to) | int(Key::Modifiers::Ctrl));
+  if (from & os::kKeyAltModifier)
+    to = Key::Modifiers(int(to) | int(Key::Modifiers::Alt));
+  if (from & (os::kKeyCmdModifier | os::kKeyWinModifier))
+    to = Key::Modifiers(int(to) | int(Key::Modifiers::Meta));
+  return to;
+}
 
 class TermDelegate {
 public:
@@ -180,7 +330,8 @@ public:
     update();                   // TODO
   }
 
-  int get_char() override {
+  // Gets next laf os::Event and converts it to our kind of Event.
+  Event get_event() override {
     os::EventQueue* q = os::System::instance()->eventQueue();
     os::Event ev;
     while (true) {
@@ -193,48 +344,21 @@ public:
           break;
 
         case os::Event::KeyDown: {
-          if (ev.modifiers() == os::kKeyCtrlModifier &&
-              ev.scancode() >= os::kKeyA &&
-              ev.scancode() <= os::kKeyZ) {
-            return ev.scancode() - os::kKeyA + 1;
-          }
+          Event out(Event::Type::Key);
+          Key key;
 
-          switch (ev.scancode()) {
-            case os::kKeyLShift:
-            case os::kKeyRShift:
-            case os::kKeyAlt:
-            case os::kKeyAltGr:
-            case os::kKeyLControl:
-            case os::kKeyRControl:
-            case os::kKeyLWin:
-            case os::kKeyRWin:
-            case os::kKeyMenu:
-            case os::kKeyCommand:
-              break;
-            case os::kKeyEnter:
-            case os::kKeyEnterPad: return 10;
-            case os::kKeyDown: return 258;
-            case os::kKeyUp: return 259;
-            case os::kKeyLeft:
-              if (ev.modifiers() & os::kKeyShiftModifier)
-                return 393;     // KEY_SLEFT
-              else
-                return KEY_LEFT;
-            case os::kKeyRight:
-              if (ev.modifiers() & os::kKeyShiftModifier)
-                return 402;     // KEY_SRIGHT
-              else
-                return KEY_RIGHT;
-            case os::kKeyBackspace: return 127;
-            case os::kKeyPageUp: return KEY_PPAGE;
-            case os::kKeyPageDown: return KEY_NPAGE;
-            default:
-              return ev.unicodeChar();
-          }
+          key.codepoint = ev.unicodeChar();
+          key.scancode = from_laf_scancode(ev.scancode());
+          key.modifiers = from_laf_modifiers(ev.modifiers());
+          key.repeat = (ev.repeat() > 0);
+
+          out.key(key);
+          return out;
         }
       }
     }
-    return 0;
+
+    return Event();
   }
 
   void attr_reverse() override {

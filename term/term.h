@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2021 David Capello
+// Copyright (c) 2016-2024 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -7,6 +7,9 @@
 #pragma once
 
 #include "fwd.h"
+#include "keys.h"
+
+class Event;
 
 class Panel {
 public:
@@ -21,7 +24,7 @@ public:
   virtual void move(int x, int y) = 0;
   virtual void update() = 0;
   virtual void update_lines(int y, int h) = 0;
-  virtual int get_char() = 0;
+  virtual Event get_event() = 0;
   virtual void attr_reverse() = 0;
   virtual void attr_normal() = 0;
 };

@@ -21,6 +21,7 @@ endif()
 add_library(term ${TERM_SOURCES})
 target_include_directories(term PUBLIC .)
 target_link_libraries(term ${PLATFORM_LIBS})
+target_link_libraries(term laf-base)
 
 if(LAF_BACKEND STREQUAL "skia")
   target_link_libraries(term laf-os laf-text)

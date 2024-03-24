@@ -12,6 +12,7 @@
 #include "base/fs.h"
 #include "ctx.h"
 #include "doc_view.h"
+#include "event.h"
 #include "lua.h"
 #include "view.h"
 
@@ -87,7 +88,7 @@ void App::back_view() {
   view()->set_panel(panel);
 }
 
-int App::alert(const char* msg) {
+Key App::alert(const char* msg) {
   auto alert_view = std::make_shared<AlertView>(msg);
   set_view(alert_view);
   while (is_running() && view() == alert_view)
@@ -103,9 +104,10 @@ void App::loop() {
   ViewPtr view = this->view();
   view->show(this);
 
-  int ch = view->panel()->get_char();
+  Event ev = view->panel()->get_event();
 
-  view->on_key(this, ch);
+  if (ev.type() == Event::Type::Key)
+    view->on_key(this, ev.key());
 }
 
 void App::open_file(const char* fn) {

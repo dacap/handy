@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2017 David Capello
+// Copyright (c) 2016-2024 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -7,6 +7,7 @@
 #pragma once
 
 #include "base.h"
+#include "keys.h"
 
 class Ctx {
 public:
@@ -16,6 +17,6 @@ public:
   virtual ViewPtr view() = 0;
   virtual void set_view(const ViewPtr& view) = 0;
   virtual void back_view() = 0;
-  virtual int alert(const char* msg) = 0;
+  virtual Key alert(const char* msg) = 0;
   virtual void open_file(const char* fn) = 0;
 };

@@ -1,11 +1,12 @@
 // handy text editor
-// Copyright (c) 2016-2021 David Capello
+// Copyright (c) 2016-2024 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
 
 #include <windows.h>
 
+#include "event.h"
 #include "term.h"
 
 class PanelWin : public Panel {
@@ -56,9 +57,9 @@ public:
     // TODO
   }
 
-  int get_char() {
+  Event get_event() {
     // TODO
-    return 0;
+    return Event();
   }
 
   void attr_reverse() {

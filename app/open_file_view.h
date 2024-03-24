@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2018 David Capello
+// Copyright (c) 2016-2024 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -16,7 +16,7 @@ public:
   std::string get_status_text() const override;
 
   void show(Ctx* ctx) override;
-  bool on_key(Ctx* ctx, int ch) override;
+  bool on_key(Ctx* ctx, const Key& key) override;
   void on_search_text(const std::string& text, int skip) override;
 
 private:

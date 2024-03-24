@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2016-2018 David Capello
+// Copyright (c) 2016-2024 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -8,6 +8,7 @@
 
 #include "base.h"
 #include "ctx.h"
+#include "keys.h"
 #include "term.h"
 
 #include <stack>
@@ -38,7 +39,7 @@ public:
 
   virtual std::string get_status_text() const;
   virtual void show(Ctx* ctx);
-  virtual bool on_key(Ctx* ctx, int ch);
+  virtual bool on_key(Ctx* ctx, const Key& key);
   virtual void on_search_text(const std::string& text, int skip = 0) { }
 
   void search_text(Ctx* ctx);

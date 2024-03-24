@@ -7,6 +7,7 @@
 #include "doc_view.h"
 
 #include "clipboard.h"
+#include "open_file_view.h"
 
 #include <algorithm>
 
@@ -115,163 +116,200 @@ void DocView::show(Ctx* ctx) {
   panel->update();
 }
 
-bool DocView::on_key(Ctx* ctx, int ch) {
+bool DocView::on_key(Ctx* ctx, const Key& key) {
   // Globals
-  switch (ch) {
-    case 6:                   // Ctrl+F
-      search_text(ctx);
-      return true;
-    case 17:                // Ctrl+Q
-      quit(ctx);
-      return true;
-    case 19:                // Ctrl+S
-      doc()->save();
-      return true;
+  if (key.ctrlKey()) {
+    switch (key.scancode) {
+      case Key::Scancode::KeyF: // Ctrl+F
+        search_text(ctx);
+        return true;
+      case Key::Scancode::KeyQ: // Ctrl+Q
+        quit(ctx);
+        return true;
+      case Key::Scancode::KeyS: // Ctrl+S
+        doc()->save();
+        return true;
+    }
   }
 
   if (mode() == Mode::Nav ||
-      mode() == Mode::Sel) {
-    switch (ch) {
-      case 'j':
-      case KEY_LEFT:
+      mode() == Mode::Sel ||
+      // Alt key to escape Ins mode by one key
+      (mode() == Mode::Ins && key.altKey())) {
+    switch (key.scancode) {
+
+      case Key::Scancode::KeyJ:
+        if (key.shiftKey()) {   // Shift+J
+          prev_expr();
+          return true;
+        }
+        [[fallthrough]];
+      case Key::Scancode::ArrowLeft:
         prev_char();
         return true;
-      case 'l':
-      case KEY_RIGHT:
+
+      case Key::Scancode::KeyL:
+        if (key.shiftKey()) {   // Shift+L
+          next_expr();
+          return true;
+        }
+        [[fallthrough]];
+      case Key::Scancode::ArrowRight:
         next_char();
         return true;
-      case 'i':
-      case KEY_UP:
+
+      case Key::Scancode::KeyI:
+        if (key.shiftKey()) {   // Shift+I
+          prev_page();
+          return true;
+        }
+        [[fallthrough]];
+      case Key::Scancode::ArrowUp:
         prev_line();
         return true;
-      case 'k':
-      case KEY_DOWN:
+
+      case Key::Scancode::KeyK:
+        if (key.shiftKey()) {   // Shift+K
+          next_page();
+          return true;
+        }
+        [[fallthrough]];
+      case Key::Scancode::ArrowDown:
         next_line();
         return true;
-      case 'I':
-      case KEY_PPAGE:
+
+      case Key::Scancode::PageUp:
         prev_page();
         return true;
-      case 'K':
-      case KEY_NPAGE:
+
+      case Key::Scancode::PageDown:
         next_page();
         return true;
-      case 'J':
-        prev_expr();
+
+      case Key::Scancode::KeyU:
+        if (key.shiftKey())
+          prev_block();
+        else
+          prev_word();
         return true;
-      case 'L':
-        next_expr();
-        return true;
-      case 'u':
-        prev_word();
-        return true;
-      case 'o':
-        next_word();
-        return true;
-      case 'U':
-        prev_block();
-        return true;
-      case 'O':
-        next_block();
+
+      case Key::Scancode::KeyO:
+        if (key.shiftKey())
+          next_block();
+        else
+          next_word();
         return true;
     }
   }
 
   if (mode() == Mode::Nav) {
-    switch (ch) {
-      case 'q':
+    switch (key.scancode) {
+      case Key::Scancode::KeyQ:
         quit(ctx);
         return true;
-      case 'm':
+      case Key::Scancode::KeyM:
         set_mode(Mode::Cmd);
         return true;
-      case 's':
+      case Key::Scancode::KeyS:
         set_mode(Mode::Sel);
         m_sel_ref = m_doc->cursors().add(cursor());
         return true;
-      case 10: // Enter starts ins mode
+      case Key::Scancode::Enter: // Enter starts ins mode
         set_mode(Mode::Ins);
         return true;
-      case 15:
-        ctx->set_view(std::make_shared<OpenFileView>());
-        return true;
-      case ' ':
-      case 127: // Space and backspace start ins mode modifying the doc
+      case Key::Scancode::KeyO:
+        if (key.ctrlKey()) {
+          ctx->set_view(std::make_shared<OpenFileView>());
+          return true;
+        }
+        break;
+      // Space and backspace start ins mode modifying the doc
+      case Key::Scancode::Space:
+      case Key::Scancode::Backspace:
         set_mode(Mode::Ins);
         break;
-      case 'd':
+      case Key::Scancode::KeyD:
         delete_prev_char();
         return true;
-      case 'f':
+      case Key::Scancode::KeyF:
         delete_next_char();
         return true;
-      case 'y':
+      case Key::Scancode::KeyY:
         search_text(ctx);
         return true;
-      case 'h':
-        if (!beg_of_line())
-          beg_of_file();
+      case Key::Scancode::KeyH:
+        if (key.shiftKey()) {
+          if (!end_of_line())
+            end_of_file();
+        }
+        else {
+          if (!beg_of_line())
+            beg_of_file();
+        }
         break;
-      case 'H':
-        if (!end_of_line())
-          end_of_file();
-        break;
-      case 'v':               // Paste
-      case 22:                // Ctrl+V
+      case Key::Scancode::KeyV: // V or Ctrl+V = Paste
         m_doc->insert(cursor(), Clipboard::get_content());
         break;
-      case 'w':
+      case Key::Scancode::KeyW:
         clean_whitespace();
         break;
-      case 'z':               // Undo
-        m_doc->undo();
-        set_cursor(m_doc->last_modified_index());
-        break;
-      case 'Z':               // Redo
-        m_doc->redo();
-        set_cursor(m_doc->last_modified_index());
+      case Key::Scancode::KeyZ:
+        if (key.shiftKey()) {
+          // Redo
+          m_doc->redo();
+          set_cursor(m_doc->last_modified_index());
+        }
+        else {
+          // Undo
+          m_doc->undo();
+          set_cursor(m_doc->last_modified_index());
+        }
         break;
     }
   }
 
   if (mode() == Mode::Ins) {
-    switch (ch) {
-      case KEY_LEFT:  prev_char(); return true;
-      case KEY_RIGHT: next_char(); return true;
-      case KEY_UP:    prev_line(); return true;
-      case KEY_DOWN:  next_line(); return true;
-      case KEY_PPAGE: prev_page(); return true;
-      case KEY_NPAGE: next_page(); return true;
-      case 27:
+    switch (key.scancode) {
+      case Key::Scancode::ArrowLeft:  prev_char(); return true;
+      case Key::Scancode::ArrowRight: next_char(); return true;
+      case Key::Scancode::ArrowUp:    prev_line(); return true;
+      case Key::Scancode::ArrowDown:  next_line(); return true;
+      case Key::Scancode::PageUp:     prev_page(); return true;
+      case Key::Scancode::PageDown:   next_page(); return true;
+      case Key::Scancode::Escape:
         set_mode(Mode::Nav);
         break;
-      case 127:      // backspace
+      case Key::Scancode::Backspace:
         delete_prev_char();
         break;
-      default:
-        m_doc->insert(cursor(), ch);
+      case Key::Scancode::Enter:
+        m_doc->insert(cursor(), 10);
         update_scroll(); // TODO call this automatically when m_doc.cursors.update_cursors_from() is signaled
+        break;
+      default:
+        if (key.codepoint && !key.ctrlKey()) {
+          m_doc->insert(cursor(), key.codepoint);
+          update_scroll(); // TODO call this automatically when m_doc.cursors.update_cursors_from() is signaled
+        }
         break;
     }
     return true;
   }
 
   if (mode() == Mode::Sel) {
-    switch (ch) {
-      case 127:               // backspace
+    switch (key.scancode) {
+      case Key::Scancode::Backspace:
         delete_sel();
         break;
         // continue in 'x' case
-      case 'x':               // TODO cut
-      case 24:                // Ctrl+X
+      case Key::Scancode::KeyX: // X or Ctrl+X = Cut
         Clipboard::set_content(sel_content());
         delete_sel();
         break;
-      case 'c':               // TODO copy
-      case 3:                 // Ctrl+C
+      case Key::Scancode::KeyC: // C or Ctrl+C = Copy
         Clipboard::set_content(sel_content());
         break;
-      case 'q':               // TODO quit
+      case Key::Scancode::KeyQ: // TODO quit
         break;
     }
     m_doc->cursors().del(m_sel_ref);
@@ -280,14 +318,14 @@ bool DocView::on_key(Ctx* ctx, int ch) {
   }
 
   if (mode() == Mode::Cmd) {
-    switch (ch) {
-      case 'q':
+    switch (key.scancode) {
+      case Key::Scancode::KeyQ:
         quit(ctx);
         return true;
-      case 'f':
+      case Key::Scancode::KeyF:
         ctx->set_view(std::make_shared<OpenFileView>());
         break;
-      case 's':
+      case Key::Scancode::KeyS:
         doc()->save();
         break;
     }
@@ -295,7 +333,7 @@ bool DocView::on_key(Ctx* ctx, int ch) {
     return true;
   }
 
-  return View::on_key(ctx, ch);
+  return View::on_key(ctx, key);
 }
 
 void DocView::on_search_text(const std::string& text, int skip)
@@ -317,10 +355,10 @@ void DocView::on_search_text(const std::string& text, int skip)
 
 void DocView::quit(Ctx* ctx) {
   if (m_doc->modified()) {
-    int res = ctx->alert("Quit => Save changes? [y]es [n]o [c]ancel");
-    if (res == 'y')
+    const Key key = ctx->alert("Quit => Save changes? [y]es [n]o [c]ancel");
+    if (key.scancode == Key::Scancode::KeyY)
       m_doc->save();
-    else if (res != 'n')
+    else if (key.scancode != Key::Scancode::KeyN)
       return;                   // Cancel
   }
   ctx->close();
