@@ -199,6 +199,10 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
         else
           next_word();
         return true;
+
+      case Key::Scancode::KeyM:
+        set_mode(Mode::Cmd);
+        return true;
     }
   }
 
@@ -206,9 +210,6 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
     switch (key.scancode) {
       case Key::Scancode::KeyQ:
         quit(ctx);
-        return true;
-      case Key::Scancode::KeyM:
-        set_mode(Mode::Cmd);
         return true;
       case Key::Scancode::KeyS:
         set_mode(Mode::Sel);
