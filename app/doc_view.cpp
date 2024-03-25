@@ -129,6 +129,9 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
       case Key::Scancode::KeyS: // Ctrl+S
         doc()->save();
         return true;
+      case Key::Scancode::KeyW: // Ctrl+W
+        close(ctx);
+        return true;
     }
   }
 
@@ -203,6 +206,13 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
       case Key::Scancode::KeyM:
         set_mode(Mode::Cmd);
         return true;
+
+      case Key::Scancode::KeyW:
+        if (key.shiftKey())     // Alt+Shift+W = Close file
+          close(ctx);
+        else
+          clean_whitespace();
+        return true;
     }
   }
 
@@ -250,9 +260,6 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
         break;
       case Key::Scancode::KeyV: // V or Ctrl+V = Paste
         m_doc->insert(cursor(), Clipboard::get_content());
-        break;
-      case Key::Scancode::KeyW:
-        clean_whitespace();
         break;
       case Key::Scancode::KeyZ:
         if (key.shiftKey()) {
@@ -354,14 +361,17 @@ void DocView::on_search_text(const std::string& text, int skip)
   }
 }
 
+void DocView::close(Ctx* ctx) {
+  if (!ask_save_changes(ctx))
+    return;
+
+  ctx->close_file(m_doc);
+}
+
 void DocView::quit(Ctx* ctx) {
-  if (m_doc->modified()) {
-    const Key key = ctx->alert("Quit => Save changes? [y]es [n]o [c]ancel");
-    if (key.scancode == Key::Scancode::KeyY)
-      m_doc->save();
-    else if (key.scancode != Key::Scancode::KeyN)
-      return;                   // Cancel
-  }
+  if (!ask_save_changes(ctx))
+    return;
+
   ctx->close();
 }
 
@@ -665,6 +675,17 @@ void DocView::clean_whitespace() {
         delete_range(i, j);
     }
   }
+}
+
+bool DocView::ask_save_changes(Ctx* ctx) {
+  if (m_doc->modified()) {
+    const Key key = ctx->alert("Quit => Save changes? [y]es [n]o [c]ancel");
+    if (key.scancode == Key::Scancode::KeyY)
+      m_doc->save();
+    else if (key.scancode != Key::Scancode::KeyN)
+      return false;             // Cancel
+  }
+  return true;
 }
 
 std::string DocView::sel_content()

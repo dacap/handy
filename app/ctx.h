@@ -19,4 +19,5 @@ public:
   virtual void back_view() = 0;
   virtual Key alert(const char* msg) = 0;
   virtual void open_file(const char* fn) = 0;
+  virtual void close_file(const DocPtr& doc) = 0;
 };

@@ -14,7 +14,6 @@
 #include "view.h"
 
 #include <memory>
-#include <stack>
 #include <vector>
 
 class Lua;
@@ -34,12 +33,15 @@ public:
   bool is_running() const;
   void loop();
   void open_file(const char* fn) override;
+  void close_file(const DocPtr& doc) override;
 
 private:
+  void make_new_untitled();
+
   bool m_running;
   TermPtr m_term;
   std::vector<PanelPtr> m_panels;
   PanelPtr m_main, m_status;
-  std::stack<ViewPtr> m_views;
+  std::vector<ViewPtr> m_views;
   std::unique_ptr<Lua> m_lua;
 };

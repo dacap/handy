@@ -16,6 +16,7 @@
 #include "lua.h"
 #include "view.h"
 
+#include <cassert>
 #include <cstring>
 
 App::App(int argc, char* argv[])
@@ -50,9 +51,7 @@ App::App(int argc, char* argv[])
   m_panels.push_back(m_main);
   m_panels.push_back(m_status);
 
-  auto main_view = std::make_shared<DocView>(std::make_shared<Doc>());
-  m_views.push(main_view);
-  main_view->set_panel(m_main);
+  make_new_untitled();
 
   m_lua->run_script(base::get_file_title_with_path(argv[0]) + ".lua");
   m_lua->run_code("if init then init() end");
@@ -73,19 +72,26 @@ PanelPtr App::status() {
 }
 
 ViewPtr App::view() {
-  return m_views.top();
+  return (!m_views.empty() ? m_views.back(): ViewPtr());
 }
 
 void App::set_view(const ViewPtr& v) {
-  v->set_panel(view()->panel());
-  view()->set_panel(nullptr);
-  m_views.push(v);
+  v->set_panel(m_main);
+
+  if (auto old_view = view())
+    old_view->set_panel(nullptr);
+
+  m_views.push_back(v);
 }
 
 void App::back_view() {
-  PanelPtr panel = view()->panel();
-  m_views.pop();
-  view()->set_panel(panel);
+  assert(view());
+  if (!view())
+    return;
+
+  m_views.pop_back();
+  if (auto new_view = view())
+    new_view->set_panel(m_main);
 }
 
 Key App::alert(const char* msg) {
@@ -102,6 +108,9 @@ bool App::is_running() const {
 
 void App::loop() {
   ViewPtr view = this->view();
+  if (!view->panel()) // TODO add assert, this shouldn't happen
+    view->set_panel(m_main);
+
   view->show(this);
 
   Event ev = view->panel()->get_event();
@@ -114,4 +123,31 @@ void App::open_file(const char* fn) {
   auto doc = std::make_shared<Doc>();
   if (doc->load(fn))
     set_view(std::make_shared<DocView>(doc));
+}
+
+void App::close_file(const DocPtr& doc) {
+  for (auto it=m_views.begin(), end=m_views.end();
+       it != end; ) {
+    if (auto* docView = dynamic_cast<DocView*>(it->get())) {
+      if (docView->doc() == doc) {
+        (*it)->set_panel(nullptr);
+
+        it = m_views.erase(it);
+        end = m_views.end();
+        continue;
+      }
+    }
+    ++it;
+  }
+
+  if (m_views.empty()) {
+    make_new_untitled();
+  }
+  else {
+    set_view(m_views.back());
+  }
+}
+
+void App::make_new_untitled() {
+  set_view(std::make_shared<DocView>(std::make_shared<Doc>()));
 }

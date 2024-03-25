@@ -34,6 +34,7 @@ public:
   bool on_key(Ctx* ctx, const Key& key) override;
   void on_search_text(const std::string& text, int skip) override;
 
+  void close(Ctx* ctx);
   void quit(Ctx* ctx);
   bool prev_char();
   void next_char();
@@ -58,6 +59,10 @@ public:
   void clean_whitespace();
 
 private:
+  // Returns true if the changes were saved or the user select to
+  // continue without saving changes.
+  bool ask_save_changes(Ctx* ctx);
+
   std::string sel_content();
   void update_scroll();
 
