@@ -15,13 +15,11 @@ if(WIN32)
   add_definitions(-DUNICODE -D_UNICODE)
 endif()
 
+set(CLIP_ENABLE_IMAGE OFF CACHE BOOL "")
+set(CLIP_EXAMPLES OFF CACHE BOOL "")
 set(LAF_WITH_EXAMPLES OFF CACHE BOOL "")
 set(LAF_WITH_TESTS OFF CACHE BOOL "")
 add_subdirectory(laf)
-
-set(CLIP_ENABLE_IMAGE OFF CACHE BOOL "")
-set(CLIP_EXAMPLES OFF CACHE BOOL "")
-add_subdirectory(clip)
 
 set(UNDO_TESTS OFF CACHE BOOL "Compile undo tests")
 add_subdirectory(undo)
