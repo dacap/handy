@@ -7,9 +7,7 @@
 #include "open_file_view.h"
 
 OpenFileView::OpenFileView() {
-  m_path = base::get_current_path();
-  m_files = base::list_files(m_path);
-  m_selected = 0;
+  open_path(base::get_current_path());
 }
 
 std::string OpenFileView::get_status_text() const {
@@ -58,8 +56,11 @@ bool OpenFileView::on_key(Ctx* ctx, const Key& key) {
     case Key::Scancode::Enter:  // Enter open the selected file
       // open file
       if (m_selected >= 0 && m_selected < int(m_files.size())) {
-        ctx->open_file(
-          base::join_path(m_path, m_files[m_selected]).c_str());
+        std::string fn = base::join_path(m_path, m_files[m_selected]);
+        if (base::is_file(fn))
+          ctx->open_file(fn.c_str());
+        else if (base::is_directory(fn))
+          open_path(fn);
       }
       break;
     case Key::Scancode::KeyF:
@@ -94,4 +95,18 @@ void OpenFileView::on_search_text(const std::string& text, int skip)
 
     ++i;
   }
+}
+
+void OpenFileView::open_path(const std::string& path)
+{
+  m_path = path;
+
+  m_files.clear();
+  m_files.push_back(".");
+  m_files.push_back("..");
+
+  auto list = base::list_files(m_path);
+  m_files.insert(m_files.end(), list.begin(), list.end());
+
+  m_selected = 0;
 }

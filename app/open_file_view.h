@@ -20,6 +20,8 @@ public:
   void on_search_text(const std::string& text, int skip) override;
 
 private:
+  void open_path(const std::string& path);
+
   std::string m_path;
   std::vector<std::string> m_files;
   int m_selected;
