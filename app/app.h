@@ -36,6 +36,7 @@ public:
   void close_file(const DocPtr& doc) override;
 
 private:
+  void recreate_panels();
   void make_new_untitled();
 
   bool m_running;

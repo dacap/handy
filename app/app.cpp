@@ -46,11 +46,7 @@ App::App(int argc, char* argv[])
 #endif
   }
 
-  m_main = m_term->makePanel(0, 0, m_term->width(), m_term->height()-1);
-  m_status = m_term->makePanel(0, m_term->height()-1, m_term->width(), 1);
-  m_panels.push_back(m_main);
-  m_panels.push_back(m_status);
-
+  recreate_panels();
   make_new_untitled();
 
   m_lua->run_script(base::get_file_title_with_path(argv[0]) + ".lua");
@@ -115,8 +111,16 @@ void App::loop() {
 
   Event ev = view->panel()->get_event();
 
-  if (ev.type() == Event::Type::Key)
-    view->on_key(this, ev.key());
+  switch (ev.type()) {
+
+    case Event::Type::Resize:
+      recreate_panels();
+      break;
+
+    case Event::Type::Key:
+      view->on_key(this, ev.key());
+      break;
+  }
 }
 
 void App::open_file(const char* fn) {
@@ -145,6 +149,21 @@ void App::close_file(const DocPtr& doc) {
   }
   else {
     set_view(m_views.back());
+  }
+}
+
+void App::recreate_panels() {
+  PanelPtr old_main = m_main;
+
+  m_main = m_term->makePanel(0, 0, m_term->width(), m_term->height()-1);
+  m_status = m_term->makePanel(0, m_term->height()-1, m_term->width(), 1);
+  m_panels.clear();
+  m_panels.push_back(m_main);
+  m_panels.push_back(m_status);
+
+  for (auto& view : m_views) {
+    if (view->panel() == old_main)
+      view->set_panel(m_main);
   }
 }
 

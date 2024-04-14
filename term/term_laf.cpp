@@ -169,6 +169,7 @@ public:
   virtual gfx::Size charSize() = 0;
   virtual text::FontRef font() = 0;
   virtual text::FontMgrRef fontMgr() = 0;
+  virtual void handleResizeEvent() = 0;
 };
 
 static Panel* m_curPanel = nullptr;
@@ -339,9 +340,10 @@ public:
       int ch = 0;
       switch (ev.type()) {
 
-        case os::Event::ResizeWindow:
-          update();
-          break;
+        case os::Event::ResizeWindow: {
+          m_delegate->handleResizeEvent();
+          return Event(Event::Type::Resize);
+        }
 
         case os::Event::KeyDown: {
           Event out(Event::Type::Key);
@@ -430,6 +432,11 @@ public:
   gfx::Size charSize() override { return m_charSize; }
   text::FontRef font() override { return m_font; }
   text::FontMgrRef fontMgr() override { return m_fontMgr; }
+  void handleResizeEvent() override {
+    const gfx::Rect client = m_window->contentRect();
+    m_termSize.w = std::max(1, client.w / m_charSize.w);
+    m_termSize.h = std::max(1, client.h / m_charSize.h);
+  }
 
 };
 
