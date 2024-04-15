@@ -6,6 +6,8 @@
 
 #include "open_file_view.h"
 
+#include "git_view.h"
+
 OpenFileView::OpenFileView() {
   open_path(base::get_current_path());
 }
@@ -52,6 +54,13 @@ bool OpenFileView::on_key(Ctx* ctx, const Key& key) {
     case Key::Scancode::ArrowDown:
       if (m_selected < int(m_files.size()-1))
         ++m_selected;
+      break;
+      // Git Status
+    case Key::Scancode::KeyS:
+      if (mode() == Mode::Nav) {
+        ctx->set_view(std::make_shared<GitView>(m_path));
+        return true;
+      }
       break;
     case Key::Scancode::Enter:  // Enter open the selected file
       // open file

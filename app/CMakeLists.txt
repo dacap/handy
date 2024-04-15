@@ -1,5 +1,5 @@
 # handy text editor
-# Copyright (c) 2021 David Capello
+# Copyright (c) 2021-2024 David Capello
 #
 # This file is released under the terms of the MIT license.
 # Read LICENSE.txt for more information.
@@ -17,6 +17,7 @@ add_executable(handy
   doc.cpp
   doc_undo.cpp
   doc_view.cpp
+  git_view.cpp
   lua.cpp
   main.cpp
   open_file_view.cpp
