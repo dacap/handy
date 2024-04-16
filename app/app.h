@@ -29,7 +29,7 @@ public:
   ViewPtr view() override;
   void set_view(const ViewPtr& v) override;
   void back_view() override;
-  Key alert(const char* msg) override;
+  Key alert(std::string_view msg) override;
   bool is_running() const;
   void loop();
   void open_file(const char* fn) override;

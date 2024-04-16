@@ -222,9 +222,9 @@ public:
     m_pt = gfx::Point(0, 0);
   }
 
-  void print(const char* s) override {
-    for (; *s; ++s)
-      print(*s);
+  void print(std::string_view s) override {
+    for (auto ch : s)
+      print(ch);
   }
 
   void print(const char ch) override {

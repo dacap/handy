@@ -6,7 +6,7 @@
 
 #include "alert_view.h"
 
-AlertView::AlertView(const char* msg) {
+AlertView::AlertView(std::string_view msg) {
   m_msg = msg;
 }
 

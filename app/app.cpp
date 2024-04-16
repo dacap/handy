@@ -90,7 +90,7 @@ void App::back_view() {
     new_view->set_panel(m_main);
 }
 
-Key App::alert(const char* msg) {
+Key App::alert(std::string_view msg) {
   auto alert_view = std::make_shared<AlertView>(msg);
   set_view(alert_view);
   while (is_running() && view() == alert_view)

@@ -9,6 +9,8 @@
 #include "base.h"
 #include "keys.h"
 
+#include <string_view>
+
 class Ctx {
 public:
   virtual ~Ctx() { }
@@ -17,7 +19,7 @@ public:
   virtual ViewPtr view() = 0;
   virtual void set_view(const ViewPtr& view) = 0;
   virtual void back_view() = 0;
-  virtual Key alert(const char* msg) = 0;
+  virtual Key alert(std::string_view msg) = 0;
   virtual void open_file(const char* fn) = 0;
   virtual void close_file(const DocPtr& doc) = 0;
 };

@@ -9,6 +9,8 @@
 #include "fwd.h"
 #include "keys.h"
 
+#include <string_view>
+
 class Event;
 
 class Panel {
@@ -19,7 +21,7 @@ public:
   virtual int width() const = 0;
   virtual int height() const = 0;
   virtual void clear() = 0;
-  virtual void print(const char* s) = 0;
+  virtual void print(std::string_view s) = 0;
   virtual void print(const char ch) = 0;
   virtual void move(int x, int y) = 0;
   virtual void update() = 0;

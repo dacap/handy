@@ -125,8 +125,8 @@ public:
     wclear(m_win);
   }
 
-  void print(const char* s) override {
-    wprintw(m_win, s);
+  void print(std::string_view s) override {
+    waddnstr(m_win, s.data(), s.size());
   }
 
   void print(const char ch) override {

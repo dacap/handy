@@ -9,10 +9,11 @@
 #include "view.h"
 
 #include <string>
+#include <string_view>
 
 class AlertView : public View {
 public:
-  AlertView(const char* msg);
+  AlertView(std::string_view msg);
   const Key& result() const { return m_result; }
 
   std::string get_status_text() const override;
