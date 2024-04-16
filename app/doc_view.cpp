@@ -120,6 +120,9 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
   // Globals
   if (key.ctrlKey()) {
     switch (key.scancode) {
+      case Key::Scancode::KeyO: // Ctrl+O
+        ctx->set_view(std::make_shared<OpenFileView>());
+        return true;
       case Key::Scancode::KeyF: // Ctrl+F
         search_text(ctx);
         return true;
