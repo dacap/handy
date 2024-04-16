@@ -349,8 +349,7 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
   return View::on_key(ctx, key);
 }
 
-void DocView::on_search_text(const std::string& text, int skip)
-{
+void DocView::on_search_text(const std::string& text, int skip) {
   for (cursor_t i=cursor(); i < m_doc->size(); ++i) {
     cursor_t j = 0;
     for (; j < text.size() &&
@@ -364,6 +363,10 @@ void DocView::on_search_text(const std::string& text, int skip)
       }
     }
   }
+}
+
+bool DocView::on_close(Ctx* ctx) {
+  return ask_save_changes(ctx);
 }
 
 void DocView::close(Ctx* ctx) {

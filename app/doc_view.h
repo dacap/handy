@@ -33,6 +33,7 @@ public:
   void show(Ctx* ctx) override;
   bool on_key(Ctx* ctx, const Key& key) override;
   void on_search_text(const std::string& text, int skip) override;
+  bool on_close(Ctx* ctx) override;
 
   void close(Ctx* ctx);
   void quit(Ctx* ctx);

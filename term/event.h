@@ -12,6 +12,7 @@ class Event {
 public:
   enum class Type {
     Unknown,
+    Close,
     Resize,
     Key,
   };

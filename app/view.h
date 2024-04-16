@@ -41,6 +41,7 @@ public:
   virtual void show(Ctx* ctx);
   virtual bool on_key(Ctx* ctx, const Key& key);
   virtual void on_search_text(const std::string& text, int skip = 0) { }
+  virtual bool on_close(Ctx* ctx) { return true; }
 
   void search_text(Ctx* ctx);
 

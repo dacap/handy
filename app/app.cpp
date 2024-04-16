@@ -60,6 +60,13 @@ App::~App()
 
 // Ctx impl
 void App::close() {
+  while (!m_views.empty()) {
+    ViewPtr view = this->view();
+    if (view->on_close(this))
+      m_views.pop_back();
+    else
+      return;                   // Operation canceled
+  }
   m_running = false;
 }
 
@@ -112,6 +119,10 @@ void App::loop() {
   Event ev = view->panel()->get_event();
 
   switch (ev.type()) {
+
+    case Event::Type::Close:
+      close();
+      break;
 
     case Event::Type::Resize:
       recreate_panels();

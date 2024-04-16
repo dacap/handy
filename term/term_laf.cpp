@@ -340,6 +340,9 @@ public:
       int ch = 0;
       switch (ev.type()) {
 
+        case os::Event::CloseWindow:
+          return Event(Event::Type::Close);
+
         case os::Event::ResizeWindow: {
           m_delegate->handleResizeEvent();
           return Event(Event::Type::Resize);
