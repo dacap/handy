@@ -146,12 +146,14 @@ public:
   }
 
   Event get_event() override {
-    Event ev(Event::Type::Key);
-
     // Get key from ncurses
     int ch = wgetch(m_win);
-    Key key = key_from_curses_char(ch);
 
+    if (ch == KEY_RESIZE)
+      return Event(Event::Type::Resize);
+
+    Event ev(Event::Type::Key);
+    Key key = key_from_curses_char(ch);
     ev.key(key);
     return ev;
   }
