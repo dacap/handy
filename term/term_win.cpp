@@ -37,7 +37,7 @@ public:
     // TODO
   }
 
-  void print(const char* s) {
+  void print(std::string_view s) override {
     // TODO
   }
 
