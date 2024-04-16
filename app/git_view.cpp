@@ -22,7 +22,7 @@ void GitView::Item::fill_hunks()
 {
   hunks.clear();
 
-  auto pipe = popen(("git diff " + file).c_str(), "rt");
+  auto pipe = popen(("git diff " + file).c_str(), "r");
   if (pipe) {
     std::vector<char> buf(1024);
     Hunk hunk;
@@ -115,7 +115,7 @@ void GitView::git_status()
 {
   m_items.clear();
 
-  auto pipe = popen("git status --porcelain", "rt");
+  auto pipe = popen("git status --porcelain", "r");
   if (pipe) {
     std::vector<char> buf(1024);
     while (fgets(buf.data(), buf.size(), pipe)) {
