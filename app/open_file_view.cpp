@@ -6,6 +6,7 @@
 
 #include "open_file_view.h"
 
+#include "fmt/format.h"
 #include "git_view.h"
 
 OpenFileView::OpenFileView() {
@@ -13,7 +14,7 @@ OpenFileView::OpenFileView() {
 }
 
 std::string OpenFileView::get_status_text() const {
-  return "-- " + m_path + " --";
+  return fmt::format("-- {} --", m_path);
 }
 
 void OpenFileView::show(Ctx* ctx) {

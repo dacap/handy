@@ -6,12 +6,15 @@
 
 #include "git_view.h"
 
+#include "base/fs.h"
 #include "base/trim_string.h"
 
 #include <cstdio>
 #include <cstdlib>
 #include <sstream>
 #include <vector>
+
+#include "fmt/format.h"
 
 #if WIN32
 #define popen _popen
@@ -40,7 +43,7 @@ GitView::GitView(const std::string& path)
 }
 
 std::string GitView::get_status_text() const {
-  return "-- " + m_path + " --";
+  return fmt::format("-- {} --", m_path);
 }
 
 void GitView::show(Ctx* ctx) {

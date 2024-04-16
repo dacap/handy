@@ -11,6 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(handy)
 
+add_subdirectory(fmt)
+
 if(WIN32)
   add_definitions(-DUNICODE -D_UNICODE)
 endif()

@@ -25,6 +25,7 @@ add_executable(handy
   ${CMAKE_BINARY_DIR}/handy.lua)
 
 target_link_libraries(handy
+  fmt
   term
   clip
   undo

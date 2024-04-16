@@ -7,6 +7,7 @@
 #include "doc_view.h"
 
 #include "clipboard.h"
+#include "fmt/format.h"
 #include "open_file_view.h"
 
 #include <algorithm>
@@ -34,18 +35,19 @@ void DocView::set_scroll(const Point& scroll) {
 }
 
 std::string DocView::get_status_text() const {
-  char buf[2048];
+  std::string buf;
   if (mode() == Mode::Cmd) {
-    sprintf(buf, "Command? [s]ave [m]ore [q]uit");
+    buf = "Command? [s]ave [m]ore [q]uit";
   }
   else {
     Point p = m_doc->convert_cursor_to_point(cursor());
-    sprintf(buf, "-- %d:%d -- %s%s%s --",
-            p.y+1, p.x,
-            doc()->filename().c_str(),
-            doc()->modified() ? " (*)": "",
-            mode() == Mode::Ins ? " -- editing":
-            mode() == Mode::Sel ? " -- selecting": "");
+    buf = fmt::format(
+      "-- {}:{} -- {}{}{} --",
+      p.y+1, p.x,
+      doc()->filename().c_str(),
+      doc()->modified() ? " (*)": "",
+      mode() == Mode::Ins ? " -- editing":
+      mode() == Mode::Sel ? " -- selecting": "");
   }
   return buf;
 }

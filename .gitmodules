@@ -10,3 +10,6 @@
 [submodule "lua"]
 	path = lua
 	url = https://github.com/lua/lua.git
+[submodule "fmt"]
+	path = fmt
+	url = https://github.com/fmtlib/fmt.git
