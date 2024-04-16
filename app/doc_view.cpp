@@ -146,6 +146,16 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
       (mode() == Mode::Ins && key.altKey())) {
     switch (key.scancode) {
 
+      case Key::Scancode::KeyQ:
+        quit(ctx);
+        return true;
+
+      case Key::Scancode::KeyS:
+      case Key::Scancode::Space:
+        set_mode(Mode::Sel);
+        m_sel_ref = m_doc->cursors().add(cursor());
+        return true;
+
       case Key::Scancode::KeyJ:
         if (key.shiftKey()) {   // Shift+J
           prev_expr();
@@ -218,18 +228,52 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
         else
           clean_whitespace();
         return true;
+
+      case Key::Scancode::KeyD:
+        delete_prev_char();
+        return true;
+
+      case Key::Scancode::KeyF:
+        delete_next_char();
+        return true;
+
+      case Key::Scancode::KeyY:
+        search_text(ctx);
+        return true;
+
+      case Key::Scancode::KeyH:
+        if (key.shiftKey()) {
+          if (!end_of_line())
+            end_of_file();
+        }
+        else {
+          if (!beg_of_line())
+            beg_of_file();
+        }
+        return true;
+
+      case Key::Scancode::KeyV: // V or Ctrl+V = Paste
+        m_doc->insert(cursor(), Clipboard::get_content());
+        break;
+
+      case Key::Scancode::KeyZ:
+        if (key.shiftKey()) {
+          // Redo
+          m_doc->redo();
+          set_cursor(m_doc->last_modified_index());
+        }
+        else {
+          // Undo
+          m_doc->undo();
+          set_cursor(m_doc->last_modified_index());
+        }
+        break;
+
     }
   }
 
   if (mode() == Mode::Nav) {
     switch (key.scancode) {
-      case Key::Scancode::KeyQ:
-        quit(ctx);
-        return true;
-      case Key::Scancode::KeyS:
-        set_mode(Mode::Sel);
-        m_sel_ref = m_doc->cursors().add(cursor());
-        return true;
       case Key::Scancode::Enter: // Enter starts ins mode
         set_mode(Mode::Ins);
         return true;
@@ -243,40 +287,6 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
       case Key::Scancode::Space:
       case Key::Scancode::Backspace:
         set_mode(Mode::Ins);
-        break;
-      case Key::Scancode::KeyD:
-        delete_prev_char();
-        return true;
-      case Key::Scancode::KeyF:
-        delete_next_char();
-        return true;
-      case Key::Scancode::KeyY:
-        search_text(ctx);
-        return true;
-      case Key::Scancode::KeyH:
-        if (key.shiftKey()) {
-          if (!end_of_line())
-            end_of_file();
-        }
-        else {
-          if (!beg_of_line())
-            beg_of_file();
-        }
-        break;
-      case Key::Scancode::KeyV: // V or Ctrl+V = Paste
-        m_doc->insert(cursor(), Clipboard::get_content());
-        break;
-      case Key::Scancode::KeyZ:
-        if (key.shiftKey()) {
-          // Redo
-          m_doc->redo();
-          set_cursor(m_doc->last_modified_index());
-        }
-        else {
-          // Undo
-          m_doc->undo();
-          set_cursor(m_doc->last_modified_index());
-        }
         break;
     }
   }
