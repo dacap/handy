@@ -40,3 +40,13 @@ Some random notes about the "handy" UX:
 
 This program is being developed on macOS. There are no short-term
 plans to port it to other platforms yet.
+
+## Credits
+
+handy depends on the following open source projects:
+
+* [clip](https://github.com/dacap/clip) - Cross-platform C++ library to copy/paste clipboard content
+* [fmt](https://github.com/fmtlib/fmt) - A modern formatting library
+* [laf](https://github.com/aseprite/laf) - A C++ library to create desktop applications
+* [lua](http://www.lua.org) - A Scripting Language
+* [undo](https://github.com/dacap/undo) - C++ library to implement non-linear undo/redo functionality
