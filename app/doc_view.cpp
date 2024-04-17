@@ -8,7 +8,7 @@
 
 #include "clipboard.h"
 #include "fmt/format.h"
-#include "open_file_view.h"
+#include "dir_view.h"
 
 #include <algorithm>
 
@@ -123,7 +123,7 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
   if (key.ctrlKey()) {
     switch (key.scancode) {
       case Key::Scancode::KeyO: // Ctrl+O
-        ctx->set_view(std::make_shared<OpenFileView>());
+        ctx->set_view(std::make_shared<DirView>());
         return true;
       case Key::Scancode::KeyF: // Ctrl+F
         search_text(ctx);
@@ -279,7 +279,7 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
         return true;
       case Key::Scancode::KeyO:
         if (key.ctrlKey()) {
-          ctx->set_view(std::make_shared<OpenFileView>());
+          ctx->set_view(std::make_shared<DirView>());
           return true;
         }
         break;
@@ -346,7 +346,7 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
         quit(ctx);
         return true;
       case Key::Scancode::KeyF:
-        ctx->set_view(std::make_shared<OpenFileView>());
+        ctx->set_view(std::make_shared<DirView>());
         break;
       case Key::Scancode::KeyS:
         doc()->save();

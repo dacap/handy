@@ -14,13 +14,13 @@ add_executable(handy
   alert_view.cpp
   app.cpp
   clipboard.cpp
+  dir_view.cpp
   doc.cpp
   doc_undo.cpp
   doc_view.cpp
   git_view.cpp
   lua.cpp
   main.cpp
-  open_file_view.cpp
   view.cpp
   ${CMAKE_BINARY_DIR}/handy.lua)
 

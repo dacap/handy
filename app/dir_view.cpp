@@ -4,20 +4,20 @@
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
 
-#include "open_file_view.h"
+#include "dir_view.h"
 
 #include "fmt/format.h"
 #include "git_view.h"
 
-OpenFileView::OpenFileView() {
+DirView::DirView() {
   open_path(base::get_current_path());
 }
 
-std::string OpenFileView::get_status_text() const {
+std::string DirView::get_status_text() const {
   return fmt::format("-- {} --", m_path);
 }
 
-void OpenFileView::show(Ctx* ctx) {
+void DirView::show(Ctx* ctx) {
   PanelPtr panel = this->panel();
   panel->clear();
   panel->move(0, 0);
@@ -37,7 +37,7 @@ void OpenFileView::show(Ctx* ctx) {
   View::show(ctx);
 }
 
-bool OpenFileView::on_key(Ctx* ctx, const Key& key) {
+bool DirView::on_key(Ctx* ctx, const Key& key) {
   switch (key.scancode) {
     case Key::Scancode::KeyQ:
     case Key::Scancode::Escape:
@@ -87,7 +87,7 @@ bool OpenFileView::on_key(Ctx* ctx, const Key& key) {
   return View::on_key(ctx, key);
 }
 
-void OpenFileView::on_search_text(const std::string& text, int skip)
+void DirView::on_search_text(const std::string& text, int skip)
 {
   bool continue_search = false;
   int i = 0;
@@ -107,7 +107,7 @@ void OpenFileView::on_search_text(const std::string& text, int skip)
   }
 }
 
-void OpenFileView::open_path(const std::string& path)
+void DirView::open_path(const std::string& path)
 {
   m_path = path;
 

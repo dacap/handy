@@ -9,9 +9,9 @@
 #include "base/fs.h"
 #include "view.h"
 
-class OpenFileView : public View {
+class DirView : public View {
 public:
-  OpenFileView();
+  DirView();
 
   std::string get_status_text() const override;
 
