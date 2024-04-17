@@ -241,6 +241,14 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
           clean_whitespace();
         return true;
 
+      case Key::Scancode::KeyE:
+        delete_prev_word();
+        return true;
+
+      case Key::Scancode::KeyR:
+        delete_next_word();
+        return true;
+
       case Key::Scancode::KeyD:
         delete_prev_char();
         return true;
@@ -545,6 +553,26 @@ void DocView::prev_block() {
 }
 
 void DocView::next_block() {
+}
+
+void DocView::delete_prev_word() {
+  cursor_t j = cursor();
+  if (j > 0) {
+    prev_word();
+    cursor_t i = cursor();
+    m_doc->erase(i, j-i);
+    update_scroll();
+  }
+}
+
+void DocView::delete_next_word() {
+  cursor_t i = cursor();
+  if (i < m_doc->size()) {
+    next_word();
+    cursor_t j = cursor();
+    m_doc->erase(i, j-i);
+    update_scroll();
+  }
 }
 
 void DocView::delete_prev_char() {

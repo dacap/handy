@@ -49,6 +49,8 @@ public:
   void next_expr();
   void prev_block();
   void next_block();
+  void delete_prev_word();
+  void delete_next_word();
   void delete_prev_char();
   void delete_next_char();
   bool delete_sel();
