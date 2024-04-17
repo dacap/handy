@@ -9,8 +9,20 @@ function log(s)
   end
 end
 
+function is_file(fn)
+  local f = io.open(fn, "r")
+  if f then
+    io.close(f)
+    return true
+  end
+  return false
+end
+
 function init()
-  -- Do nothing
+  local user_file = 'handy-user.lua'
+  if is_file(user_file) then
+    dofile(user_file)
+  end
 end
 
 function exit()
