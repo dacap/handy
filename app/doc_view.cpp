@@ -164,7 +164,12 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
 
       case Key::Scancode::KeyS:
       case Key::Scancode::Space:
-        set_mode(Mode::Sel);
+        if (mode() != Mode::Sel) {
+          enter_mode(Mode::Sel);
+        }
+        else {
+          m_doc->cursors().del(m_sel_ref);
+        }
         m_sel_ref = m_doc->cursors().add(cursor());
         return true;
 
@@ -231,7 +236,7 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
         return true;
 
       case Key::Scancode::KeyM:
-        set_mode(Mode::Cmd);
+        enter_mode(Mode::Cmd);
         return true;
 
       case Key::Scancode::KeyW:
@@ -357,7 +362,8 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
     }
     m_doc->cursors().del(m_sel_ref);
     m_sel_ref = -1;
-    set_mode(Mode::Nav);
+    back_mode(Mode::Ins);
+
   }
 
   if (mode() == Mode::Cmd) {
@@ -372,7 +378,7 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
         doc()->save();
         break;
     }
-    set_mode(Mode::Nav);
+    back_mode(Mode::Ins);
     return true;
   }
 
