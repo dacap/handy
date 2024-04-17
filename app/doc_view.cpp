@@ -432,9 +432,6 @@ void DocView::prev_line() {
   while (i > 0 && m_doc->get_char(i) != '\n')
     --i;
 
-  if (i == 0)
-    return;
-
   int u = m_doc->convert_cursor_to_point(i).x;
   if (u > x) {
     while (u > x) {
