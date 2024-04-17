@@ -274,7 +274,7 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
 
       case Key::Scancode::KeyV: // V or Ctrl+V = Paste
         m_doc->insert(cursor(), Clipboard::get_content());
-        break;
+        return true;
 
       case Key::Scancode::KeyZ:
         if (key.shiftKey()) {
