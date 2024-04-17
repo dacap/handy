@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2021 David Capello
+// Copyright (c) 2021-2024 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -8,6 +8,7 @@
 
 #include "base/fs.h"
 #include "base/fstream_path.h"
+#include "ctx.h"
 
 #include <fstream>
 #include <sstream>
@@ -32,30 +33,41 @@ Lua::~Lua()
   lua_close(L);
 }
 
-void Lua::run_script(const std::string& fn)
+Lua::Error Lua::run_script(Ctx* ctx, const std::string& fn)
 {
   std::stringstream buf;
   {
     std::ifstream s(FSTREAM_PATH(fn));
     if (!s)
-      return;
+      return Error::FileNotFound;
     buf << s.rdbuf();
   }
   std::string abs_fn = base::get_absolute_path(fn);
   abs_fn.insert(0, "@");
 
+  Error err = Error::OK;
   if (luaL_loadbuffer(L, buf.str().c_str(), buf.str().size(), abs_fn.c_str()) ||
       lua_pcall(L, 0, 1, 0)) {
-    // OK
+    if (const char* s = lua_tostring(L, -1))
+      ctx->alert(s);
+    err = Error::LuaError;
   }
   lua_gc(L, LUA_GCCOLLECT);
+
+  return err;
 }
 
-void Lua::run_code(const std::string& code)
+Lua::Error Lua::run_code(Ctx* ctx, const std::string& code)
 {
+  Error err = Error::OK;
+
   if (luaL_loadbuffer(L, code.c_str(), code.size(), "") ||
       lua_pcall(L, 0, 1, 0)) {
-    // OK
+    if (const char* s = lua_tostring(L, -1))
+      ctx->alert(s);
+    err = Error::LuaError;
   }
   lua_gc(L, LUA_GCCOLLECT);
+
+  return err;
 }

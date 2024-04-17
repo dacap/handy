@@ -1,5 +1,5 @@
 // handy text editor
-// Copyright (c) 2021 David Capello
+// Copyright (c) 2021-2024 David Capello
 //
 // This file is released under the terms of the MIT license.
 // Read LICENSE.txt for more information.
@@ -14,13 +14,21 @@ extern "C" {
 
 #include <string>
 
+class Ctx;
+
 class Lua {
 public:
+  enum Error {
+    OK,
+    FileNotFound,
+    LuaError,
+  };
+
   Lua();
   ~Lua();
 
-  void run_script(const std::string& fn);
-  void run_code(const std::string& code);
+  Error run_script(Ctx* ctx, const std::string& fn);
+  Error run_code(Ctx* ctx, const std::string& code);
 
 private:
   lua_State* L;

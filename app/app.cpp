@@ -49,13 +49,13 @@ App::App(int argc, char* argv[])
   recreate_panels();
   make_new_untitled();
 
-  m_lua->run_script(base::get_file_title_with_path(argv[0]) + ".lua");
-  m_lua->run_code("if init then init() end");
+  m_lua->run_script(this, base::get_file_title_with_path(argv[0]) + ".lua");
+  m_lua->run_code(this, "if init then init() end");
 }
 
 App::~App()
 {
-  m_lua->run_code("if exit then exit() end");
+  m_lua->run_code(this, "if exit then exit() end");
 }
 
 // Ctx impl
