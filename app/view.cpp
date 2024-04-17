@@ -13,6 +13,21 @@ View::View()
 View::~View() {
 }
 
+void View::enter_mode(Mode mode) {
+  m_old_modes.push(m_mode);
+  set_mode(mode);
+}
+
+void View::back_mode(Mode last_mode) {
+  if (m_old_modes.empty())
+    set_mode(last_mode);
+  else {
+    Mode restore_mode = m_old_modes.top();
+    m_old_modes.pop();
+    set_mode(restore_mode);
+  }
+}
+
 std::string View::get_status_text() const {
   return std::string();
 }
@@ -37,13 +52,7 @@ bool View::on_key(Ctx* ctx, const Key& key) {
       case Key::Scancode::Enter:
       case Key::Scancode::Escape:
         // Back to previous mode
-        if (m_old_modes.empty())
-          set_mode(Mode::Nav);
-        else {
-          Mode restore_mode = m_old_modes.top();
-          m_old_modes.pop();
-          set_mode(restore_mode);
-        }
+        back_mode(Mode::Nav);
         return true;
       case Key::Scancode::Backspace: // Backspace remove text
         if (!m_searching_text.empty()) {
@@ -65,8 +74,7 @@ bool View::on_key(Ctx* ctx, const Key& key) {
 
 void View::search_text(Ctx* ctx) {
   if (mode() != Mode::Sea) {
-    m_old_modes.push(mode());
-    set_mode(Mode::Sea);
+    enter_mode(Mode::Sea);
     m_searching_text.clear();
   }
   else {

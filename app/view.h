@@ -33,9 +33,11 @@ public:
   }
 
   Mode mode() const { return m_mode; }
-  void set_mode(const Mode& mode) {
+  void set_mode(Mode mode) {
     m_mode = mode;
   }
+  void enter_mode(Mode mode);
+  void back_mode(Mode last_mode);
 
   virtual std::string get_status_text() const;
   virtual void show(Ctx* ctx);
