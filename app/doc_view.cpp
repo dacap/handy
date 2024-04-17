@@ -152,10 +152,9 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
     }
   }
 
-  if (mode() == Mode::Nav ||
-      mode() == Mode::Sel ||
-      // Alt key to escape Ins mode by one key
-      (mode() == Mode::Ins && key.altKey())) {
+  if ((mode() == Mode::Nav) ||
+      // Alt key to escape Ins and other modes
+      (mode() != Mode::Cmd && key.altKey())) {
     switch (key.scancode) {
 
       case Key::Scancode::KeyQ:
@@ -345,25 +344,52 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
   }
 
   if (mode() == Mode::Sel) {
+    bool used = false;
+
     switch (key.scancode) {
+
       case Key::Scancode::Backspace:
         delete_sel();
+        used = true;
         break;
-        // continue in 'x' case
+
       case Key::Scancode::KeyX: // X or Ctrl+X = Cut
         Clipboard::set_content(sel_content());
         delete_sel();
+        used = true;
         break;
+
       case Key::Scancode::KeyC: // C or Ctrl+C = Copy
         Clipboard::set_content(sel_content());
+        used = true;
         break;
-      case Key::Scancode::KeyQ: // TODO quit
+
+      // Alt+Q or Alt+N cancels the selection
+      case Key::Scancode::KeyQ:
+      case Key::Scancode::KeyN:
+        if (key.altKey())
+          used = true;
+        break;
+
+      default:
+        if (key.codepoint != 0) {
+          // Pressing any key will delete the selection and reprocess
+          // the key event to insert the char in the place of the erased
+          // selection.
+          delete_sel();
+        }
         break;
     }
+
     m_doc->cursors().del(m_sel_ref);
     m_sel_ref = -1;
     back_mode(Mode::Ins);
 
+    if (used)
+      return true;
+
+    // Reprocess the same event in Ins mode.
+    return on_key(ctx, key);
   }
 
   if (mode() == Mode::Cmd) {
