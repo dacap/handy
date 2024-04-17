@@ -137,6 +137,18 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
       case Key::Scancode::KeyW: // Ctrl+W
         close(ctx);
         return true;
+      case Key::Scancode::KeyZ: // Ctrl+Z
+        if (key.shiftKey()) {
+          // Redo
+          m_doc->redo();
+          set_cursor(m_doc->last_modified_index());
+        }
+        else {
+          // Undo
+          m_doc->undo();
+          set_cursor(m_doc->last_modified_index());
+        }
+        return true;
     }
   }
 
