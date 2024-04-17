@@ -327,7 +327,10 @@ bool DocView::on_key(Ctx* ctx, const Key& key) {
         set_mode(Mode::Nav);
         break;
       case Key::Scancode::Backspace:
-        delete_prev_char();
+        if (key.altKey())
+          delete_prev_word();
+        else
+          delete_prev_char();
         break;
       case Key::Scancode::Enter:
         m_doc->insert(cursor(), 10);
