@@ -1,14 +1,20 @@
 -- handy text editor
--- Copyright (c) 2021 David Capello
+-- Copyright (c) 2021-2024 David Capello
 
-local log
+local logfile
+function log(s)
+  if not logfile then
+    logfile = io.open("handy.log", "w")
+    logfile:write(s)
+  end
+end
 
 function init()
-  log = io.open("handy.log", "w")
-  log:write('init\n')
+  -- Do nothing
 end
 
 function exit()
-  log:write('exit\n')
-  log:close(f)
+  if logfile then
+    logfile:close()
+  end
 end
