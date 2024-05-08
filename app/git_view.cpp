@@ -117,6 +117,7 @@ void GitView::on_search_text(const std::string& text, int skip)
 void GitView::git_status()
 {
   m_items.clear();
+  base::set_current_path(m_path);
 
   auto pipe = popen("git status --porcelain", "r");
   if (pipe) {
