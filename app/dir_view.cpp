@@ -54,6 +54,7 @@ bool DirView::on_key(Ctx* ctx, const Key& key) {
       if (m_selected > 0) {
         --m_selected;
         update_scroll();
+        return true;
       }
       break;
     case Key::Scancode::KeyK:
@@ -61,6 +62,7 @@ bool DirView::on_key(Ctx* ctx, const Key& key) {
       if (m_selected < int(m_files.size()-1)) {
         ++m_selected;
         update_scroll();
+        return true;
       }
       break;
       // Git Status
@@ -79,6 +81,7 @@ bool DirView::on_key(Ctx* ctx, const Key& key) {
           ctx->open_file(fn.c_str());
         else if (base::is_directory(fn))
           open_path(fn);
+        return true;
       }
       break;
     case Key::Scancode::KeyF:
