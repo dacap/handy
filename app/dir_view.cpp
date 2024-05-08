@@ -67,6 +67,7 @@ bool DirView::on_key(Ctx* ctx, const Key& key) {
       // open file
       if (m_selected >= 0 && m_selected < int(m_files.size())) {
         std::string fn = base::join_path(m_path, m_files[m_selected]);
+        fn = base::normalize_path(fn);
         if (base::is_file(fn))
           ctx->open_file(fn.c_str());
         else if (base::is_directory(fn))
