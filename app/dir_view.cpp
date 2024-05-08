@@ -22,15 +22,18 @@ void DirView::show(Ctx* ctx) {
   panel->clear();
   panel->move(0, 0);
 
-  int i = 0;
-  for (const auto& f : m_files) {
+  const int last_visible = std::min<int>(m_scroll.y+panel->height(),
+                                         m_files.size());
+
+  for (int i=m_scroll.y; i<last_visible; ++i) {
+    const std::string& f = m_files[i];
+
     if (m_selected == i)
       panel->attr_reverse();
     else
       panel->attr_normal();
 
     panel->print((f+"\n").c_str());
-    ++i;
   }
 
   panel->update();
@@ -48,13 +51,17 @@ bool DirView::on_key(Ctx* ctx, const Key& key) {
       break;
     case Key::Scancode::KeyI:
     case Key::Scancode::ArrowUp:
-      if (m_selected > 0)
+      if (m_selected > 0) {
         --m_selected;
+        update_scroll();
+      }
       break;
     case Key::Scancode::KeyK:
     case Key::Scancode::ArrowDown:
-      if (m_selected < int(m_files.size()-1))
+      if (m_selected < int(m_files.size()-1)) {
         ++m_selected;
+        update_scroll();
+      }
       break;
       // Git Status
     case Key::Scancode::KeyS:
@@ -100,6 +107,7 @@ void DirView::on_search_text(const std::string& text, int skip)
         f.find(text) != std::string::npos) {
       if (skip-- == 0) {
         m_selected = i;
+        update_scroll();
         break;
       }
     }
@@ -120,4 +128,14 @@ void DirView::open_path(const std::string& path)
   m_files.insert(m_files.end(), list.begin(), list.end());
 
   m_selected = 0;
+  m_scroll = Point(0, 0);
+}
+
+void DirView::update_scroll() {
+  // Update scroll
+  PanelPtr panel = this->panel();
+  Point scroll = m_scroll;
+  if (m_selected < scroll.y) scroll.y = m_selected;
+  if (m_selected > scroll.y+panel->height()-1) scroll.y = m_selected-panel->height()+1;
+  m_scroll = scroll;
 }

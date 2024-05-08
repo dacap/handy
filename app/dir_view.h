@@ -7,6 +7,7 @@
 #pragma once
 
 #include "base/fs.h"
+#include "point.h"
 #include "view.h"
 
 class DirView : public View {
@@ -21,8 +22,10 @@ public:
 
 private:
   void open_path(const std::string& path);
+  void update_scroll();
 
   std::string m_path;
   std::vector<std::string> m_files;
   int m_selected;
+  Point m_scroll;
 };
