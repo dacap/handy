@@ -442,9 +442,6 @@ void DocView::close(Ctx* ctx) {
 }
 
 void DocView::quit(Ctx* ctx) {
-  if (!ask_save_changes(ctx))
-    return;
-
   ctx->close();
 }
 
