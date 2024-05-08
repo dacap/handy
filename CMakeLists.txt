@@ -1,5 +1,5 @@
 # handy text editor
-# Copyright (c) 2016-2021 David Capello
+# Copyright (c) 2016-2024 David Capello
 #
 # This file is released under the terms of the MIT license.
 # Read LICENSE.txt for more information.
@@ -10,6 +10,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(handy)
+
+# Debug C/C++ flags
+if(CMAKE_BUILD_TYPE STREQUAL Debug)
+  add_definitions(-D_DEBUG)
+else()
+  add_definitions(-DNDEBUG)
+endif()
 
 add_subdirectory(fmt)
 
