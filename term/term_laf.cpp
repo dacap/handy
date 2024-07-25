@@ -405,6 +405,7 @@ public:
     m_charSize = gfx::Size(width, height);
 
     m_window = m_system->makeWindow(m_charSize.w*80, m_charSize.h*25);
+    m_window->setGpuAcceleration(true);
     m_window->setCursor(os::NativeCursor::Arrow);
     m_system->finishLaunching();
     m_system->activateApp();
@@ -428,6 +429,10 @@ public:
   PanelPtr makePanel(int x, int y, int w, int h) override {
     return std::make_shared<PanelLaf>(gfx::Rect(x, y, w, h),
                                       this);
+  }
+
+  void update() override {
+    m_window->swapBuffers();
   }
 
   // TermDelegate impl

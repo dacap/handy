@@ -100,6 +100,10 @@ public:
     return std::make_shared<PanelWin>(x, y, w, h);
   }
 
+  void update() override {
+    // Do nothing
+  }
+
 };
 
 // static

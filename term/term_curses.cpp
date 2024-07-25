@@ -197,6 +197,10 @@ public:
     return std::make_shared<PanelCurses>(x, y, w, h);
   }
 
+  void update() override {
+    // Do nothing
+  }
+
 };
 
 // static

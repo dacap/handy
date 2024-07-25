@@ -115,6 +115,7 @@ void App::loop() {
     view->set_panel(m_main);
 
   view->show(this);
+  m_term->update();
 
   Event ev = view->panel()->get_event();
 

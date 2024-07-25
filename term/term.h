@@ -40,4 +40,5 @@ public:
   virtual int width() const = 0;
   virtual int height() const = 0;
   virtual PanelPtr makePanel(int x, int y, int w, int h) = 0;
+  virtual void update() = 0;
 };
